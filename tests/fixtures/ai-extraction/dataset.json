@@ -1,0 +1,58 @@
+[
+  {
+    "id": "english-single-vacancy",
+    "kind": "ENGLISH_TEXT",
+    "asset": null,
+    "inputText": "QA TEST ONLY - NOT A REAL VACANCY. Software Engineer, Quality Assurance Department, 2 vacancies, BS Computer Science, 3 years experience, Lahore. Apply by 30 November 2026 at https://example.invalid/qa/jobs/english.",
+    "expected": { "jobTitle": "Software Engineer", "department": "Quality Assurance Department", "vacancyCount": 2, "education": "BS Computer Science", "experience": "3 years", "ageLimit": null, "bps": null, "location": "Lahore", "domicile": null, "quota": null, "applicationDeadline": "2026-11-30", "applicationUrl": "https://example.invalid/qa/jobs/english" }
+  },
+  {
+    "id": "urdu-single-vacancy",
+    "kind": "URDU_IMAGE",
+    "asset": "urdu-advertisement.png",
+    "inputText": "صرف جانچ کے لیے - یہ حقیقی ملازمت نہیں۔ اسسٹنٹ، محکمہ معیار، آسامیوں کی تعداد 3، تعلیم بی اے، مقام پشاور، آخری تاریخ 5 دسمبر 2026۔",
+    "expected": { "jobTitle": "اسسٹنٹ", "department": "محکمہ معیار", "vacancyCount": 3, "education": "بی اے", "experience": null, "ageLimit": null, "bps": null, "location": "پشاور", "domicile": null, "quota": null, "applicationDeadline": "2026-12-05", "applicationUrl": null }
+  },
+  {
+    "id": "mixed-language",
+    "kind": "MIXED_IMAGE",
+    "asset": "mixed-advertisement.png",
+    "inputText": "QA TEST ONLY - حقیقی ملازمت نہیں۔ Data Analyst - محکمہ تحقیق، 1 vacancy, BS Statistics، مقام Islamabad، Apply by 10 December 2026.",
+    "expected": { "jobTitle": "Data Analyst", "department": "محکمہ تحقیق", "vacancyCount": 1, "education": "BS Statistics", "experience": null, "ageLimit": null, "bps": null, "location": "Islamabad", "domicile": null, "quota": null, "applicationDeadline": "2026-12-10", "applicationUrl": null }
+  },
+  {
+    "id": "newspaper-scan",
+    "kind": "NEWSPAPER_SCAN",
+    "asset": "newspaper-scan.png",
+    "inputText": "QA TEST ONLY. Accounts Officer, Test Finance Department, BPS-16, B.Com, age 21-30, Quetta, Balochistan domicile, open merit, closing 15 December 2026.",
+    "expected": { "jobTitle": "Accounts Officer", "department": "Test Finance Department", "vacancyCount": null, "education": "B.Com", "experience": null, "ageLimit": "21-30", "bps": "BPS-16", "location": "Quetta", "domicile": "Balochistan", "quota": "Open merit", "applicationDeadline": "2026-12-15", "applicationUrl": null }
+  },
+  {
+    "id": "multi-page-pdf",
+    "kind": "MULTI_PAGE_PDF",
+    "asset": "output/pdf/jobdraftly-ai-evaluation-multi-page.pdf",
+    "inputText": "QA TEST ONLY. Page 1: Lecturer, Test University Department, 4 vacancies. Page 2: MS relevant subject, 2 years experience, Karachi, deadline 20 December 2026.",
+    "expected": { "jobTitle": "Lecturer", "department": "Test University Department", "vacancyCount": 4, "education": "MS relevant subject", "experience": "2 years", "ageLimit": null, "bps": null, "location": "Karachi", "domicile": null, "quota": null, "applicationDeadline": "2026-12-20", "applicationUrl": null }
+  },
+  {
+    "id": "low-quality-image",
+    "kind": "LOW_QUALITY_IMAGE",
+    "asset": "low-quality-advertisement.png",
+    "inputText": "QA TEST ONLY. Junior Clerk, Test Administration, 5 vacancies, Intermediate, Multan. Unknown age, BPS, quota, deadline and application URL.",
+    "expected": { "jobTitle": "Junior Clerk", "department": "Test Administration", "vacancyCount": 5, "education": "Intermediate", "experience": null, "ageLimit": null, "bps": null, "location": "Multan", "domicile": null, "quota": null, "applicationDeadline": null, "applicationUrl": null }
+  },
+  {
+    "id": "multiple-vacancies",
+    "kind": "MULTIPLE_VACANCIES",
+    "asset": "multiple-vacancies.png",
+    "inputText": "QA TEST ONLY. Vacancy 1: Lab Technician, 2 posts, BSc, Faisalabad. Vacancy 2: Office Assistant, 1 post, BA, Faisalabad. Deadline 22 December 2026.",
+    "expected": { "jobTitle": "Lab Technician", "department": null, "vacancyCount": 2, "education": "BSc", "experience": null, "ageLimit": null, "bps": null, "location": "Faisalabad", "domicile": null, "quota": null, "applicationDeadline": "2026-12-22", "applicationUrl": null }
+  },
+  {
+    "id": "deadline-corrigendum",
+    "kind": "CORRIGENDUM",
+    "asset": "deadline-corrigendum.png",
+    "inputText": "QA TEST ONLY - CORRIGENDUM. The deadline for Test Project Officer is extended from 1 December 2026 to 18 December 2026. All other conditions remain unchanged.",
+    "expected": { "jobTitle": "Test Project Officer", "department": null, "vacancyCount": null, "education": null, "experience": null, "ageLimit": null, "bps": null, "location": null, "domicile": null, "quota": null, "applicationDeadline": "2026-12-18", "applicationUrl": null }
+  }
+]

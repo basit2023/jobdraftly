@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens.
+ * Typefaces: Poppins (body/UI) and Montserrat (headings, wordmark) only.
+ * Font files are self-hosted by next/font in src/app/layout.tsx.
+ */
+@theme inline {
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-display: var(--font-montserrat), sans-serif;
+}
+
+@theme {
+  --color-ink: #14171f;
+  --color-body: #3d4452;
+  --color-muted: #6b7280;
+  --color-line: #e6e3dd;
+  --color-paper: #f8f7f4;
+  --color-brand: #0b6e4f;
+  --color-brand-dark: #085a40;
+  --color-brand-tint: #e8f2ed;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: #cfe6dc;
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}

@@ -1,0 +1,47 @@
+# Dependencies
+/node_modules
+/.npm-cache/
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+
+# Testing and coverage
+/coverage/
+
+# Production output
+/build/
+
+# Local environment files (the example file is intentionally tracked)
+.env*
+!.env.example
+!.env.production.example
+
+# Local backup verification output (production backups must live outside the release tree)
+/backups/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma local artifacts
+/prisma/dev.db*
+
+# Runtime company-logo uploads (keep only the directory marker)
+/public/uploads/company-logos/*
+!/public/uploads/company-logos/.gitkeep
+

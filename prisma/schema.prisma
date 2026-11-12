@@ -1,0 +1,632 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum AuditAction {
+  LOGIN
+  CREATE
+  UPDATE
+  ARCHIVE
+  PUBLISH
+  UNPUBLISH
+  FEATURE
+  UNFEATURE
+  UPLOAD
+  IMPORT
+  APPROVE
+  REJECT
+  EXPIRE
+  SYNC
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+  FREELANCE
+  OTHER
+}
+
+enum ExperienceLevel {
+  NOT_SPECIFIED
+  ENTRY_LEVEL
+  JUNIOR
+  MID_LEVEL
+  SENIOR
+  LEAD
+  MANAGER
+  DIRECTOR
+  EXECUTIVE
+}
+
+enum SalaryVisibility {
+  HIDDEN
+  RANGE
+  EXACT
+  NEGOTIABLE
+}
+
+enum SalaryPeriod {
+  HOUR
+  DAY
+  WEEK
+  MONTH
+  YEAR
+}
+
+enum WorkplaceType {
+  NOT_SPECIFIED
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum ApplicationMethod {
+  EXTERNAL_URL
+  EMAIL
+  INSTRUCTIONS
+}
+
+enum JobStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+  EXPIRED
+  CLOSED
+}
+
+enum LocationType {
+  PROVINCE
+  CITY
+}
+
+enum JobSourceType {
+  MANUAL
+  CSV
+  XML_FEED
+  API
+  EMPLOYER_WEBSITE
+  JOB_BOARD
+  GOVERNMENT_PORTAL
+}
+
+enum JobImportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  COMPLETED_WITH_ERRORS
+  FAILED
+  CANCELLED
+}
+
+enum JobImportMethod {
+  CSV
+  API
+  RSS
+}
+
+enum JobImportRowStatus {
+  PENDING
+  VALID
+  DUPLICATE
+  INVALID
+  IMPORTED
+}
+
+enum JobVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  REJECTED
+}
+
+enum SourcePermissionStatus {
+  PENDING_REVIEW
+  APPROVED
+  SUSPENDED
+  REVOKED
+}
+
+enum SourceMonitoringMode {
+  DISABLED
+  API
+  RSS
+  WEB_PAGE
+}
+
+enum SourceMonitorRunStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+  SKIPPED
+}
+
+enum DiscoveryType {
+  JOB
+  ANNOUNCEMENT
+  TEST_INTERVIEW
+  RESULT_MERIT_LIST
+  DOCUMENT
+  UNKNOWN
+}
+
+enum DiscoveryStatus {
+  NEW
+  UPDATED
+  REMOVED
+  REVIEWED
+  DISMISSED
+}
+
+enum DiscoveryChangeType {
+  NEW_CONTENT
+  CONTENT_UPDATED
+  DEADLINE_CHANGED
+  CANCELLED
+  REMOVED
+  RESTORED
+  CORRECTION
+  POSSIBLE_DUPLICATE
+}
+
+enum ExtractionStatus {
+  NOT_REQUIRED
+  NOT_CONFIGURED
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+}
+
+enum AdminNotificationType {
+  NEW_JOB
+  NEW_ANNOUNCEMENT
+  SOURCE_FAILURE
+  EXTRACTION_FAILURE
+  DEADLINE_CHANGE
+  POSSIBLE_DUPLICATE
+}
+
+enum AnalyticsEventType {
+  JOB_VIEW
+  APPLICATION_LINK_CLICK
+  SEARCH
+  FILTER
+}
+
+model Admin {
+  id           String      @id @default(cuid()) @db.VarChar(30)
+  email        String      @unique(map: "uq_admins_email") @db.VarChar(191)
+  name         String      @db.VarChar(120)
+  passwordHash String      @db.VarChar(255)
+  role         AdminRole   @default(EDITOR)
+  isActive     Boolean     @default(true)
+  lastLoginAt  DateTime?   @db.DateTime(3)
+  createdAt    DateTime    @default(now()) @db.DateTime(3)
+  updatedAt    DateTime    @updatedAt @db.DateTime(3)
+  imports      JobImport[]
+  auditLogs    AuditLog[]
+  verifiedJobs Job[]       @relation("VerifiedJobs")
+
+  @@index([isActive, role], map: "idx_admins_active_role")
+  @@map("admins")
+}
+
+model Company {
+  id          String       @id @default(cuid()) @db.VarChar(30)
+  name        String       @db.VarChar(191)
+  slug        String       @unique(map: "uq_companies_slug") @db.VarChar(191)
+  legalName   String?      @db.VarChar(191)
+  websiteUrl  String?      @db.Text
+  domain      String?      @unique(map: "uq_companies_domain") @db.VarChar(191)
+  logoUrl     String?      @db.Text
+  description String?      @db.LongText
+  industry    String?      @db.VarChar(120)
+  locationId  String?      @db.VarChar(30)
+  isVerified  Boolean      @default(false)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now()) @db.DateTime(3)
+  updatedAt   DateTime     @updatedAt @db.DateTime(3)
+  location    JobLocation? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  jobs        Job[]
+
+  @@index([name], map: "idx_companies_name")
+  @@index([locationId], map: "idx_companies_location")
+  @@index([isActive, isVerified], map: "idx_companies_active_verified")
+  @@map("companies")
+}
+
+model JobCategory {
+  id          String        @id @default(cuid()) @db.VarChar(30)
+  name        String        @db.VarChar(120)
+  slug        String        @unique(map: "uq_job_categories_slug") @db.VarChar(191)
+  description String?       @db.Text
+  parentId    String?       @db.VarChar(30)
+  sortOrder   Int           @default(0) @db.UnsignedInt
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @db.DateTime(3)
+  updatedAt   DateTime      @updatedAt @db.DateTime(3)
+  parent      JobCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  children    JobCategory[] @relation("CategoryHierarchy")
+  jobs        Job[]
+
+  @@index([parentId, sortOrder], map: "idx_job_categories_parent_sort")
+  @@index([isActive, sortOrder], map: "idx_job_categories_active_sort")
+  @@map("job_categories")
+}
+
+model JobLocation {
+  id         String        @id @default(cuid()) @db.VarChar(30)
+  name       String        @db.VarChar(120)
+  slug       String        @unique(map: "uq_job_locations_slug") @db.VarChar(191)
+  type       LocationType
+  provinceId String?       @db.VarChar(30)
+  latitude   Decimal?      @db.Decimal(9, 6)
+  longitude  Decimal?      @db.Decimal(9, 6)
+  isActive   Boolean       @default(true)
+  sortOrder  Int           @default(0) @db.UnsignedInt
+  createdAt  DateTime      @default(now()) @db.DateTime(3)
+  updatedAt  DateTime      @updatedAt @db.DateTime(3)
+  province   JobLocation?  @relation("ProvinceCities", fields: [provinceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  cities     JobLocation[] @relation("ProvinceCities")
+  jobs       Job[]
+  companies  Company[]
+
+  @@unique([provinceId, name, type], map: "uq_job_locations_parent_name_type")
+  @@index([type, isActive, sortOrder], map: "idx_job_locations_type_active_sort")
+  @@map("job_locations")
+}
+
+model AuditLog {
+  id         String      @id @default(cuid()) @db.VarChar(30)
+  adminId    String?     @db.VarChar(30)
+  action     AuditAction
+  entityType String      @db.VarChar(80)
+  entityId   String?     @db.VarChar(30)
+  summary    String      @db.VarChar(255)
+  metadata   Json?
+  createdAt  DateTime    @default(now()) @db.DateTime(3)
+  admin      Admin?      @relation(fields: [adminId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([adminId, createdAt], map: "idx_audit_logs_admin_created")
+  @@index([entityType, entityId, createdAt], map: "idx_audit_logs_entity_created")
+  @@index([action, createdAt], map: "idx_audit_logs_action_created")
+  @@map("audit_logs")
+}
+
+model JobSource {
+  id                        String                 @id @default(cuid()) @db.VarChar(30)
+  name                      String                 @db.VarChar(120)
+  slug                      String                 @unique(map: "uq_job_sources_slug") @db.VarChar(191)
+  type                      JobSourceType
+  baseUrl                   String?                @db.Text
+  termsUrl                  String?                @db.Text
+  feedUrl                   String?                @db.Text
+  attributionText           String?                @db.VarChar(255)
+  permissionStatus          SourcePermissionStatus @default(PENDING_REVIEW)
+  permissionNotes           String?                @db.Text
+  approvedAt                DateTime?              @db.DateTime(3)
+  isActive                  Boolean                @default(true)
+  lastSyncAt                DateTime?              @db.DateTime(3)
+  monitoringMode            SourceMonitoringMode   @default(DISABLED)
+  monitoringEnabled         Boolean                @default(false)
+  monitoringIntervalMinutes Int                    @default(1440) @db.UnsignedInt
+  rateLimitPerMinute        Int                    @default(6) @db.UnsignedInt
+  lastScanAt                DateTime?              @db.DateTime(3)
+  lastSuccessfulScanAt      DateTime?              @db.DateTime(3)
+  nextScanAt                DateTime?              @db.DateTime(3)
+  lastFailureAt             DateTime?              @db.DateTime(3)
+  consecutiveFailures       Int                    @default(0) @db.UnsignedInt
+  lastMonitorError          String?                @db.Text
+  monitorEtag               String?                @db.VarChar(255)
+  monitorLastModified       String?                @db.VarChar(255)
+  monitorLeaseUntil         DateTime?              @db.DateTime(3)
+  /// Trusted sources may publish AI-extracted jobs without manual review when confidence is high.
+  autoPublish               Boolean                @default(false)
+  createdAt                 DateTime               @default(now()) @db.DateTime(3)
+  updatedAt                 DateTime               @updatedAt @db.DateTime(3)
+  jobs                      Job[]
+  jobImports                JobImport[]
+  monitorRuns               SourceMonitorRun[]
+  discoveries               SourceDiscovery[]
+
+  @@index([type, isActive, permissionStatus], map: "idx_job_sources_type_active_permission")
+  @@index([monitoringEnabled, nextScanAt], map: "idx_job_sources_monitoring_due")
+  @@map("job_sources")
+}
+
+model JobImport {
+  id            String          @id @default(cuid()) @db.VarChar(30)
+  sourceId      String          @db.VarChar(30)
+  uploadedById  String?         @db.VarChar(30)
+  fileName      String          @db.VarChar(255)
+  fileChecksum  String          @unique(map: "uq_job_imports_checksum") @db.Char(64)
+  method        JobImportMethod @default(CSV)
+  columnMapping Json?
+  sourceUrl     String?         @db.Text
+  status        JobImportStatus @default(PENDING)
+  totalRows     Int             @default(0) @db.UnsignedInt
+  importedRows  Int             @default(0) @db.UnsignedInt
+  duplicateRows Int             @default(0) @db.UnsignedInt
+  rejectedRows  Int             @default(0) @db.UnsignedInt
+  errorSummary  Json?
+  startedAt     DateTime?       @db.DateTime(3)
+  completedAt   DateTime?       @db.DateTime(3)
+  createdAt     DateTime        @default(now()) @db.DateTime(3)
+  updatedAt     DateTime        @updatedAt @db.DateTime(3)
+  source        JobSource       @relation(fields: [sourceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  uploadedBy    Admin?          @relation(fields: [uploadedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  jobs          Job[]
+  rows          JobImportRow[]
+
+  @@index([sourceId, status, createdAt], map: "idx_job_imports_source_status_created")
+  @@index([uploadedById], map: "idx_job_imports_uploaded_by")
+  @@map("job_imports")
+}
+
+model JobImportRow {
+  id             String             @id @default(cuid()) @db.VarChar(30)
+  jobImportId    String             @db.VarChar(30)
+  rowNumber      Int                @db.UnsignedInt
+  status         JobImportRowStatus @default(PENDING)
+  rawData        Json
+  normalizedData Json?
+  errorMessages  Json?
+  duplicateJobId String?            @db.VarChar(30)
+  createdAt      DateTime           @default(now()) @db.DateTime(3)
+  updatedAt      DateTime           @updatedAt @db.DateTime(3)
+  jobImport      JobImport          @relation(fields: [jobImportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  duplicateJob   Job?               @relation("DuplicateImportRows", fields: [duplicateJobId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@unique([jobImportId, rowNumber], map: "uq_job_import_rows_import_row")
+  @@index([jobImportId, status, rowNumber], map: "idx_job_import_rows_import_status_row")
+  @@index([duplicateJobId], map: "idx_job_import_rows_duplicate_job")
+  @@map("job_import_rows")
+}
+
+model Job {
+  id                  String                @id @default(cuid()) @db.VarChar(30)
+  title               String                @db.VarChar(191)
+  slug                String                @unique(map: "uq_jobs_slug") @db.VarChar(191)
+  companyId           String                @db.VarChar(30)
+  categoryId          String                @db.VarChar(30)
+  locationId          String                @db.VarChar(30)
+  description         String                @db.LongText
+  responsibilities    String?               @db.LongText
+  requirements        String?               @db.LongText
+  skills              String?               @db.Text
+  employmentType      EmploymentType
+  experienceLevel     ExperienceLevel       @default(NOT_SPECIFIED)
+  education           String?               @db.VarChar(191)
+  salaryMin           Decimal?              @db.Decimal(12, 2)
+  salaryMax           Decimal?              @db.Decimal(12, 2)
+  salaryCurrency      String                @default("PKR") @db.Char(3)
+  salaryVisibility    SalaryVisibility      @default(HIDDEN)
+  salaryPeriod        SalaryPeriod?
+  workplaceType       WorkplaceType
+  applicationMethod   ApplicationMethod
+  applicationUrl      String?               @db.Text
+  sourceId            String?               @db.VarChar(30)
+  sourceUrl           String?               @db.Text
+  sourceExternalId    String?               @db.VarChar(191)
+  sourceUrlHash       String?               @db.Char(64)
+  deduplicationKey    String                @unique(map: "uq_jobs_deduplication_key") @db.Char(64)
+  jobImportId         String?               @db.VarChar(30)
+  originalPublishedAt DateTime?             @db.DateTime(3)
+  verificationStatus  JobVerificationStatus @default(UNVERIFIED)
+  verifiedAt          DateTime?             @db.DateTime(3)
+  verifiedById        String?               @db.VarChar(30)
+  publishedAt         DateTime?             @db.DateTime(3)
+  applicationDeadline DateTime?             @db.DateTime(3)
+  expiresAt           DateTime?             @db.DateTime(3)
+  status              JobStatus             @default(DRAFT)
+  isFeatured          Boolean               @default(false)
+  /// Advert or banner image (e.g. a newspaper advertisement) stored in Cloudinary.
+  imageUrl            String?               @db.Text
+  createdAt           DateTime              @default(now()) @db.DateTime(3)
+  updatedAt           DateTime              @updatedAt @db.DateTime(3)
+  company             Company               @relation(fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  category            JobCategory           @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  location            JobLocation           @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  source              JobSource?            @relation(fields: [sourceId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  jobImport           JobImport?            @relation(fields: [jobImportId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  verifiedBy          Admin?                @relation("VerifiedJobs", fields: [verifiedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  duplicateImportRows JobImportRow[]        @relation("DuplicateImportRows")
+  slugRedirects       JobSlugRedirect[]
+  tags                JobTagAssignment[]
+  sourceDiscoveries   SourceDiscovery[]
+  analyticsEvents     AnalyticsEvent[]
+
+  @@unique([sourceId, sourceExternalId], map: "uq_jobs_source_external_id")
+  @@unique([sourceId, sourceUrlHash], map: "uq_jobs_source_url_hash")
+  @@index([status, publishedAt], map: "idx_jobs_status_published")
+  @@index([categoryId, status, publishedAt], map: "idx_jobs_category_status_published")
+  @@index([locationId, status, publishedAt], map: "idx_jobs_location_status_published")
+  @@index([companyId, status, publishedAt], map: "idx_jobs_company_status_published")
+  @@index([employmentType, workplaceType, status], map: "idx_jobs_type_workplace_status")
+  @@index([isFeatured, status, publishedAt], map: "idx_jobs_featured_status_published")
+  @@index([expiresAt, status], map: "idx_jobs_expiry_status")
+  @@index([jobImportId], map: "idx_jobs_import")
+  @@index([verificationStatus, status], map: "idx_jobs_verification_status")
+  @@index([verifiedById], map: "idx_jobs_verified_by")
+  @@fulltext([title, description, skills], map: "ft_jobs_search")
+  @@map("jobs")
+}
+
+model AnalyticsEvent {
+  id           String             @id @default(cuid()) @db.VarChar(30)
+  type         AnalyticsEventType
+  jobId        String?            @db.VarChar(30)
+  path         String             @db.VarChar(255)
+  locationSlug String?            @db.VarChar(191)
+  categorySlug String?            @db.VarChar(191)
+  filterCount  Int                @default(0) @db.UnsignedTinyInt
+  metadata     Json?
+  occurredAt   DateTime           @default(now()) @db.DateTime(3)
+  job          Job?               @relation(fields: [jobId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([type, occurredAt], map: "idx_analytics_type_occurred")
+  @@index([jobId, type, occurredAt], map: "idx_analytics_job_type_occurred")
+  @@index([locationSlug, type, occurredAt], map: "idx_analytics_location_type_occurred")
+  @@map("analytics_events")
+}
+
+model SourceMonitorRun {
+  id              String                   @id @default(cuid()) @db.VarChar(30)
+  sourceId        String                   @db.VarChar(30)
+  status          SourceMonitorRunStatus   @default(RUNNING)
+  startedAt       DateTime                 @default(now()) @db.DateTime(3)
+  completedAt     DateTime?                @db.DateTime(3)
+  responseStatus  Int?                     @db.UnsignedSmallInt
+  discoveredCount Int                      @default(0) @db.UnsignedInt
+  changedCount    Int                      @default(0) @db.UnsignedInt
+  removedCount    Int                      @default(0) @db.UnsignedInt
+  documentCount   Int                      @default(0) @db.UnsignedInt
+  errorMessage    String?                  @db.Text
+  metadata        Json?
+  source          JobSource                @relation(fields: [sourceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  versions        SourceDiscoveryVersion[]
+
+  @@index([sourceId, startedAt], map: "idx_source_monitor_runs_source_started")
+  @@index([status, startedAt], map: "idx_source_monitor_runs_status_started")
+  @@map("source_monitor_runs")
+}
+
+model SourceDiscovery {
+  id                String                   @id @default(cuid()) @db.VarChar(30)
+  sourceId          String                   @db.VarChar(30)
+  relatedJobId      String?                  @db.VarChar(30)
+  externalKey       String                   @db.Char(64)
+  externalId        String?                  @db.VarChar(191)
+  canonicalUrl      String                   @db.Text
+  title             String                   @db.VarChar(255)
+  summary           String?                  @db.LongText
+  type              DiscoveryType            @default(UNKNOWN)
+  status            DiscoveryStatus          @default(NEW)
+  latestChangeType  DiscoveryChangeType      @default(NEW_CONTENT)
+  fingerprint       String                   @db.Char(64)
+  sourcePublishedAt DateTime?                @db.DateTime(3)
+  deadline          DateTime?                @db.DateTime(3)
+  firstSeenAt       DateTime                 @default(now()) @db.DateTime(3)
+  lastSeenAt        DateTime                 @default(now()) @db.DateTime(3)
+  missingScans      Int                      @default(0) @db.UnsignedInt
+  removedAt         DateTime?                @db.DateTime(3)
+  rawPayload        Json?
+  extractionStatus  ExtractionStatus         @default(NOT_REQUIRED)
+  confidenceScore   Decimal?                 @db.Decimal(5, 4)
+  extractedData     Json?
+  extractionError   String?                  @db.Text
+  createdAt         DateTime                 @default(now()) @db.DateTime(3)
+  updatedAt         DateTime                 @updatedAt @db.DateTime(3)
+  source            JobSource                @relation(fields: [sourceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  relatedJob        Job?                     @relation(fields: [relatedJobId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  versions          SourceDiscoveryVersion[]
+  documents         SourceDocument[]
+
+  @@unique([sourceId, externalKey], map: "uq_source_discoveries_source_key")
+  @@index([status, type, createdAt], map: "idx_source_discoveries_status_type_created")
+  @@index([sourceId, lastSeenAt], map: "idx_source_discoveries_source_seen")
+  @@index([relatedJobId], map: "idx_source_discoveries_related_job")
+  @@index([extractionStatus, createdAt], map: "idx_source_discoveries_extraction_created")
+  @@map("source_discoveries")
+}
+
+model SourceDiscoveryVersion {
+  id           String              @id @default(cuid()) @db.VarChar(30)
+  discoveryId  String              @db.VarChar(30)
+  monitorRunId String?             @db.VarChar(30)
+  changeType   DiscoveryChangeType
+  fingerprint  String              @db.Char(64)
+  snapshot     Json
+  createdAt    DateTime            @default(now()) @db.DateTime(3)
+  discovery    SourceDiscovery     @relation(fields: [discoveryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  monitorRun   SourceMonitorRun?   @relation(fields: [monitorRunId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([discoveryId, createdAt], map: "idx_source_discovery_versions_discovery_created")
+  @@index([monitorRunId], map: "idx_source_discovery_versions_run")
+  @@map("source_discovery_versions")
+}
+
+model SourceDocument {
+  id                String           @id @default(cuid()) @db.VarChar(30)
+  discoveryId       String           @db.VarChar(30)
+  urlHash           String           @db.Char(64)
+  url               String           @db.Text
+  documentReference String?          @db.VarChar(255)
+  mimeType          String?          @db.VarChar(120)
+  extractionStatus  ExtractionStatus @default(NOT_CONFIGURED)
+  confidenceScore   Decimal?         @db.Decimal(5, 4)
+  extractedData     Json?
+  extractionError   String?          @db.Text
+  discoveredAt      DateTime         @default(now()) @db.DateTime(3)
+  processedAt       DateTime?        @db.DateTime(3)
+  discovery         SourceDiscovery  @relation(fields: [discoveryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([discoveryId, urlHash], map: "uq_source_documents_discovery_hash")
+  @@index([extractionStatus, discoveredAt], map: "idx_source_documents_extraction_discovered")
+  @@map("source_documents")
+}
+
+model AdminNotification {
+  id         String                @id @default(cuid()) @db.VarChar(30)
+  type       AdminNotificationType
+  title      String                @db.VarChar(191)
+  message    String                @db.Text
+  entityType String                @db.VarChar(80)
+  entityId   String?               @db.VarChar(30)
+  readAt     DateTime?             @db.DateTime(3)
+  createdAt  DateTime              @default(now()) @db.DateTime(3)
+
+  @@index([readAt, createdAt], map: "idx_admin_notifications_read_created")
+  @@index([type, createdAt], map: "idx_admin_notifications_type_created")
+  @@map("admin_notifications")
+}
+
+model JobSlugRedirect {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  oldSlug   String   @unique(map: "uq_job_slug_redirects_old_slug") @db.VarChar(191)
+  jobId     String   @db.VarChar(30)
+  createdAt DateTime @default(now()) @db.DateTime(3)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([jobId], map: "idx_job_slug_redirects_job")
+  @@map("job_slug_redirects")
+}
+
+model JobTag {
+  id        String             @id @default(cuid()) @db.VarChar(30)
+  name      String             @db.VarChar(80)
+  slug      String             @unique(map: "uq_job_tags_slug") @db.VarChar(191)
+  createdAt DateTime           @default(now()) @db.DateTime(3)
+  updatedAt DateTime           @updatedAt @db.DateTime(3)
+  jobs      JobTagAssignment[]
+
+  @@unique([name], map: "uq_job_tags_name")
+  @@map("job_tags")
+}
+
+model JobTagAssignment {
+  jobId     String   @db.VarChar(30)
+  tagId     String   @db.VarChar(30)
+  createdAt DateTime @default(now()) @db.DateTime(3)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tag       JobTag   @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([jobId, tagId])
+  @@index([tagId, jobId], map: "idx_job_tag_assignments_tag_job")
+  @@map("job_tag_assignments")
+}

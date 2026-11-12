@@ -1,0 +1,27 @@
+# Load these modules in WAMP's httpd.conf before enabling this virtual host:
+# mod_proxy, mod_proxy_http, mod_ssl, mod_headers, mod_rewrite, mod_socache_shmcb
+
+<VirtualHost *:80>
+    ServerName jobs-staging.jobdraftly.com
+    RewriteEngine On
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName jobs-staging.jobdraftly.com
+    SSLEngine on
+    SSLCertificateFile "C:/certificates/jobs-staging.jobdraftly.com/fullchain.pem"
+    SSLCertificateKeyFile "C:/certificates/jobs-staging.jobdraftly.com/privkey.pem"
+
+    ProxyPreserveHost On
+    ProxyRequests Off
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
+    LimitRequestBody 6291456
+
+    ProxyPass        / http://127.0.0.1:3000/ connectiontimeout=5 timeout=60 retry=0
+    ProxyPassReverse / http://127.0.0.1:3000/
+
+    ErrorLog  "logs/jobdraftly-staging-error.log"
+    CustomLog "logs/jobdraftly-staging-access.log" combined
+</VirtualHost>

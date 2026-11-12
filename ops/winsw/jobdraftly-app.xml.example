@@ -1,0 +1,22 @@
+<service>
+  <id>jobdraftly-app-staging</id>
+  <name>JobDraftly App (Staging)</name>
+  <description>JobDraftly Next.js staging application.</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>--env-file=C:\JobDraftly\shared\jobdraftly.production.env node_modules\next\dist\bin\next start --hostname 127.0.0.1 --port 3000</arguments>
+  <workingdirectory>C:\JobDraftly\current</workingdirectory>
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <onfailure action="restart" delay="10 sec" />
+  <onfailure action="restart" delay="30 sec" />
+  <onfailure action="restart" delay="60 sec" />
+  <resetfailure>1 hour</resetfailure>
+  <stoptimeout>2 min</stoptimeout>
+  <log mode="roll-by-size-time">
+    <sizeThreshold>10485760</sizeThreshold>
+    <pattern>yyyyMMdd</pattern>
+    <autoRollAtTime>00:00:00</autoRollAtTime>
+    <zipOlderThanNumDays>7</zipOlderThanNumDays>
+    <keepFiles>14</keepFiles>
+  </log>
+</service>
