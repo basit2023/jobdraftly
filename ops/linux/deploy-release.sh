@@ -25,6 +25,10 @@ if [[ ! -f "$environment_file" ]]; then
   echo "Protected environment file is missing: $environment_file" >&2
   exit 1
 fi
+if [[ ! -d "$deploy_root" || ! -w "$deploy_root" ]]; then
+  echo "Deployment user $(id -un) cannot write to $deploy_root. Expected owner/group: jobdraftly:jobdraftly." >&2
+  exit 1
+fi
 if [[ "$(command -v node)" != "/opt/node22/bin/node" ]]; then
   echo "JobDraftly Node.js 22 installation is missing at /opt/node22/bin/node." >&2
   exit 1
