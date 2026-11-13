@@ -1,9 +1,12 @@
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { access, mkdir, readdir, rm, stat } from "node:fs/promises";
 import path from "node:path";
-import { spawn } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { createGunzip, createGzip } from "node:zlib";
 import { pipeline } from "node:stream/promises";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 function executable(name) {
   const suffix = process.platform === "win32" ? ".exe" : "";
@@ -47,13 +50,16 @@ export async function createBackup() {
   const gzipPath = `${sqlPath}.gz`;
   const dump = executable("mysqldump");
   if (process.env.MYSQL_BIN_DIR) await access(dump);
+  const { stdout: dumpVersionOutput, stderr: dumpVersionError } = await execFileAsync(dump, ["--version"], { windowsHide: true });
+  const isMariaDbDump = /mariadb/i.test(`${dumpVersionOutput}\n${dumpVersionError}`);
+  const dumpArguments = [
+    `--host=${config.host}`, `--port=${config.port}`, `--user=${config.user}`,
+    "--single-transaction", "--quick", "--routines", "--events", "--triggers",
+    "--hex-blob", ...(isMariaDbDump ? [] : ["--set-gtid-purged=OFF"]),
+    "--no-tablespaces", `--result-file=${sqlPath}`, config.database,
+  ];
   try {
-    await run(dump, [
-      `--host=${config.host}`, `--port=${config.port}`, `--user=${config.user}`,
-      "--single-transaction", "--quick", "--routines", "--events", "--triggers",
-      "--hex-blob", "--set-gtid-purged=OFF", "--no-tablespaces", `--result-file=${sqlPath}`,
-      config.database,
-    ], config);
+    await run(dump, dumpArguments, config);
     await pipeline(createReadStream(sqlPath), createGzip({ level: 9 }), createWriteStream(gzipPath, { flags: "wx" }));
     const details = await stat(gzipPath);
     if (details.size < 100) throw new Error("Backup archive is unexpectedly small.");
