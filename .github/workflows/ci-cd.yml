@@ -129,7 +129,7 @@ jobs:
           CONFIGURED_SSH_PORT: ${{ vars.VPS_SSH_PORT }}
         run: |
           ssh_port="${CONFIGURED_SSH_PORT:-22}"
-          release_id="${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}"
+          release_id="${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           remote_archive="/tmp/jobdraftly-${release_id}.tar.gz"
           target="${VPS_USER}@${VPS_HOST}"
 
