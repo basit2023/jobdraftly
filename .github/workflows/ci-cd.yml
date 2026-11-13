@@ -1,0 +1,141 @@
+name: CI and deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jobdraftly-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    name: Validate, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: jobdraftly_ci
+          MYSQL_ROOT_PASSWORD: ci-root-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-root-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_URL: mysql://root:ci-root-password@127.0.0.1:3306/jobdraftly_ci
+      NEXTAUTH_SECRET: ci-only-nextauth-secret-with-at-least-32-characters
+      NEXTAUTH_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_CONTACT_EMAIL: ci@example.com
+      CRON_SECRET: ci-only-cron-secret-distinct-and-at-least-32-characters
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**/*.[jt]s', 'src/**/*.[jt]sx', 'next.config.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Generate and validate Prisma client
+        run: |
+          npm run db:generate
+          npm run db:validate
+
+      - name: Create CI database schema and reference data
+        run: |
+          npx prisma migrate deploy
+          npm run db:seed
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build production application
+        run: npm run build
+
+  deploy:
+    name: Deploy to VPS
+    needs: ci
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: production
+
+    steps:
+      - name: Check out approved source
+        uses: actions/checkout@v4
+
+      - name: Package release source
+        shell: bash
+        run: |
+          tar \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=.next \
+            --exclude=backups \
+            --exclude=test-results \
+            --exclude=playwright-report \
+            --exclude='.env*' \
+            -czf "$RUNNER_TEMP/jobdraftly-release.tar.gz" .
+
+      - name: Configure trusted SSH connection
+        shell: bash
+        env:
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_PRIVATE_KEY" > "$HOME/.ssh/jobdraftly_deploy"
+          chmod 600 "$HOME/.ssh/jobdraftly_deploy"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Upload and deploy immutable release
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          CONFIGURED_SSH_PORT: ${{ vars.VPS_SSH_PORT }}
+        run: |
+          ssh_port="${CONFIGURED_SSH_PORT:-22}"
+          release_id="${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}"
+          remote_archive="/tmp/jobdraftly-${release_id}.tar.gz"
+          target="${VPS_USER}@${VPS_HOST}"
+
+          scp -P "$ssh_port" -i "$HOME/.ssh/jobdraftly_deploy" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$RUNNER_TEMP/jobdraftly-release.tar.gz" "$target:$remote_archive"
+          ssh -p "$ssh_port" -i "$HOME/.ssh/jobdraftly_deploy" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes "$target" \
+            "bash -s -- '$release_id' '$remote_archive'" < ops/linux/deploy-release.sh

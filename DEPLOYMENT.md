@@ -1,5 +1,7 @@
 # JobDraftly deployment
 
+> **Current VPS target:** the active CI/CD configuration now targets a Linux VPS with Nginx and systemd. Follow [GITHUB_CICD_SETUP.md](GITHUB_CICD_SETUP.md). The Windows/WAMP procedure below is retained only as the previously audited alternative and is not invoked by the GitHub workflow.
+
 ## Audited environment and decision
 
 The inspected workstation is Windows 10 build 19045 with Node.js 22.20.0, npm 10.9.3, four logical processors, and WAMP Apache 2.4.62. WAMP runs MySQL Community 9.1 on port 3306 and MariaDB 11.5 on port 3307. Apache listens on port 80. Port 443, the Next.js port 3000, and Redis 6379 are not listening. Redis, Docker, Nginx, WinSW/NSSM/PM2, Certbot, and OpenSSL are not installed or on `PATH`. Apache currently loads `mod_rewrite`, but its proxy, SSL, and headers modules are not active.

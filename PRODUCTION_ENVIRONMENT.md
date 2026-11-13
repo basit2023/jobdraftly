@@ -1,5 +1,7 @@
 # Production environment
 
+> **Current VPS target:** the GitHub deployment now uses Linux, Nginx, systemd, `/var/www/jobdraftly`, and `/etc/jobdraftly/jobdraftly.env`. See [GITHUB_CICD_SETUP.md](GITHUB_CICD_SETUP.md). The Apache/Windows topology below documents the older alternative.
+
 ## Runtime topology
 
 ```text

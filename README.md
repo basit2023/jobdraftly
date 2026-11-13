@@ -53,6 +53,8 @@ Create and document real sources at `/admin/sources`, then use `/admin/imports/n
 
 ## Going live (checklist)
 
+For the GitHub Actions pipeline, Windows runner setup, MySQL creation commands, first deployment, and rollback procedure, follow [GITHUB_CICD_SETUP.md](GITHUB_CICD_SETUP.md).
+
 1. Set every value `npm run prod:preflight` asks for on the server (database account that is not root, `NEXTAUTH_SECRET` and `CRON_SECRET` of 32+ characters, HTTPS `NEXTAUTH_URL`/`NEXT_PUBLIC_SITE_URL`, `REDIS_URL`, Cloudinary keys, backup settings), then run it with `NODE_ENV=production` until it passes.
 2. `npx prisma migrate deploy` to create the tables.
 3. `npm run db:reference-data` to load the 24 categories, 7 provinces and 117 cities. It is safe to re-run after adding cities to `src/lib/reference-data/locations.ts`.

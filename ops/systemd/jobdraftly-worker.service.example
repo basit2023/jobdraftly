@@ -1,0 +1,21 @@
+[Unit]
+Description=JobDraftly background worker
+After=network-online.target jobdraftly-app.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jobdraftly
+Group=jobdraftly
+WorkingDirectory=/var/www/jobdraftly/current
+EnvironmentFile=/etc/jobdraftly/jobdraftly.env
+ExecStart=/opt/node22/bin/node --conditions=react-server --import tsx src/worker.ts
+Restart=always
+RestartSec=10
+TimeoutStopSec=120
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

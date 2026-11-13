@@ -1,4 +1,4 @@
-import { createReadStream, createWriteStream } from "node:fs";
+import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { access, mkdir, readdir, rm, stat } from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -7,7 +7,13 @@ import { pipeline } from "node:stream/promises";
 
 function executable(name) {
   const suffix = process.platform === "win32" ? ".exe" : "";
-  return process.env.MYSQL_BIN_DIR ? path.join(process.env.MYSQL_BIN_DIR, `${name}${suffix}`) : `${name}${suffix}`;
+  if (!process.env.MYSQL_BIN_DIR) return `${name}${suffix}`;
+  const preferred = path.join(process.env.MYSQL_BIN_DIR, `${name}${suffix}`);
+  if (name === "mysqldump" && process.platform !== "win32" && !existsSync(preferred)) {
+    const mariaDbDump = path.join(process.env.MYSQL_BIN_DIR, "mariadb-dump");
+    if (existsSync(mariaDbDump)) return mariaDbDump;
+  }
+  return preferred;
 }
 
 export function databaseConfig(databaseUrl = process.env.DATABASE_URL) {

@@ -14,7 +14,7 @@ if (-not (Test-Path -LiteralPath $sharedEnvironment -PathType Leaf)) { throw "Mi
 if (Test-Path -LiteralPath $release) { throw "Release already exists: $release" }
 
 New-Item -ItemType Directory -Force -Path $release | Out-Null
-$robocopyArgs = @($source, $release, "/E", "/XD", "node_modules", ".next", "backups", "test-results", "playwright-report", "/XF", ".env", ".env.local", ".env.production", "/NFL", "/NDL", "/NJH", "/NJS")
+$robocopyArgs = @($source, $release, "/E", "/XD", ".git", "node_modules", ".next", "backups", "test-results", "playwright-report", "/XF", ".env", ".env.local", ".env.production", "/NFL", "/NDL", "/NJH", "/NJS")
 & robocopy @robocopyArgs | Out-Null
 if ($LASTEXITCODE -gt 7) { throw "Source copy failed with robocopy code $LASTEXITCODE." }
 
@@ -36,4 +36,4 @@ try {
   Pop-Location
 }
 
-Write-Output "Release prepared at $release. Stop services, repoint C:\JobDraftly\current to this release, start services, then run health and smoke checks. The script intentionally does not switch traffic or DNS."
+Write-Output "Release prepared at $release. Stop services, repoint $(Join-Path $root 'current') to this release, start services, then run health and smoke checks. The script intentionally does not switch traffic or DNS."

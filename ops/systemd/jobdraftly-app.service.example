@@ -1,0 +1,21 @@
+[Unit]
+Description=JobDraftly Next.js application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jobdraftly
+Group=jobdraftly
+WorkingDirectory=/var/www/jobdraftly/current
+EnvironmentFile=/etc/jobdraftly/jobdraftly.env
+ExecStart=/opt/node22/bin/node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

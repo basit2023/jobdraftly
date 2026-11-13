@@ -49,9 +49,18 @@ for (const name of ["NEXTAUTH_SECRET", "CRON_SECRET"]) if ((process.env[name] ||
 if (process.env.NEXTAUTH_SECRET && process.env.NEXTAUTH_SECRET === process.env.CRON_SECRET) failures.push("NEXTAUTH_SECRET and CRON_SECRET must be distinct.");
 if (process.env.ADMIN_PASSWORD) failures.push("Remove temporary ADMIN_PASSWORD after initial administrator creation.");
 
-for (const file of [path.join(process.cwd(), ".next", "BUILD_ID"), path.join(process.env.MYSQL_BIN_DIR || "", process.platform === "win32" ? "mysqldump.exe" : "mysqldump")]) {
-  try { await access(file); } catch { failures.push(`Required production artifact is missing: ${file}`); }
+const buildArtifact = path.join(process.cwd(), ".next", "BUILD_ID");
+try { await access(buildArtifact); } catch { failures.push(`Required production artifact is missing: ${buildArtifact}`); }
+
+const dumpDirectory = process.env.MYSQL_BIN_DIR || "";
+const dumpCandidates = process.platform === "win32"
+  ? [path.join(dumpDirectory, "mysqldump.exe")]
+  : [path.join(dumpDirectory, "mysqldump"), path.join(dumpDirectory, "mariadb-dump")];
+let dumpFound = false;
+for (const candidate of dumpCandidates) {
+  try { await access(candidate); dumpFound = true; break; } catch { /* Try the compatible MariaDB name. */ }
 }
+if (!dumpFound) failures.push(`A database dump utility is required. Checked: ${dumpCandidates.join(", ")}`);
 
 if (failures.length) {
   console.error(JSON.stringify({ status: "failed", checks: failures, warnings }, null, 2));
