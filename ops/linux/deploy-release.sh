@@ -42,7 +42,7 @@ rm -f -- "$archive_path"
 cd "$release_path"
 npm ci
 node --env-file="$environment_file" node_modules/prisma/build/index.js generate
-node --env-file="$environment_file" node_modules/next/dist/bin/next build
+node scripts/run-cli-with-env.mjs "$environment_file" node_modules/next/dist/bin/next build
 node --env-file="$environment_file" scripts/production-preflight.mjs
 node --env-file="$environment_file" scripts/backup-mysql.mjs
 node --env-file="$environment_file" node_modules/prisma/build/index.js migrate deploy
