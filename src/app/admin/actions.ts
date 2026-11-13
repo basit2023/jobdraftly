@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { createAuditLog } from "@/lib/services/admin-audit";
 import { createEntitySlug } from "@/lib/services/entity-slug";
 import { createJobDeduplicationKey, createJobSlug, createSourceUrlHash } from "@/lib/services/job-identity";
+import { revalidatePublicJobDiscovery } from "@/lib/seo/revalidate";
 import {
   type AdminFormState,
   categoryAdminSchema,
@@ -102,7 +103,7 @@ export async function createJobAction(_state: AdminFormState, formData: FormData
   }
 
   revalidatePath("/admin/jobs");
-  revalidatePath("/");
+  revalidatePublicJobDiscovery();
   redirect("/admin/jobs?created=1");
 }
 
@@ -168,7 +169,7 @@ export async function updateJobAction(id: string, _state: AdminFormState, formDa
   revalidatePath(`/admin/jobs/${id}/edit`);
   if (previousSlug) revalidatePath(`/jobs/${previousSlug}`);
   if (currentSlug) revalidatePath(`/jobs/${currentSlug}`);
-  revalidatePath("/");
+  revalidatePublicJobDiscovery();
   redirect("/admin/jobs?updated=1");
 }
 
@@ -177,7 +178,8 @@ export async function archiveJobAction(id: string) {
   const job = await db.job.update({ where: { id }, data: { status: "CLOSED", isFeatured: false } });
   await createAuditLog({ adminId: admin.id, action: "ARCHIVE", entityType: "Job", entityId: id, summary: `Archived job: ${job.title}` });
   revalidatePath("/admin/jobs");
-  revalidatePath("/");
+  revalidatePath(`/jobs/${job.slug}`);
+  revalidatePublicJobDiscovery();
 }
 
 export async function setJobPublishedAction(id: string, publish: boolean) {
@@ -201,7 +203,8 @@ export async function setJobPublishedAction(id: string, publish: boolean) {
   });
   await createAuditLog({ adminId: admin.id, action: publish ? "PUBLISH" : "UNPUBLISH", entityType: "Job", entityId: id, summary: `${publish ? "Published" : "Unpublished"} job: ${job.title}` });
   revalidatePath("/admin/jobs");
-  revalidatePath("/");
+  revalidatePath(`/jobs/${job.slug}`);
+  revalidatePublicJobDiscovery();
 }
 
 export async function setJobFeaturedAction(id: string, featured: boolean) {

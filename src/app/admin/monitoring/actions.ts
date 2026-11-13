@@ -12,6 +12,7 @@ import { processSourceDocument } from "@/lib/monitoring/extraction";
 import { publishDiscoveredJobs } from "@/lib/monitoring/publisher";
 import { scanSource } from "@/lib/monitoring/runner";
 import { createAuditLog } from "@/lib/services/admin-audit";
+import { revalidatePublicJobDiscovery } from "@/lib/seo/revalidate";
 import { sourceMonitoringSchema } from "@/lib/validations/admin-forms";
 
 function rawValue(payload: unknown, names: string[]) {
@@ -81,6 +82,7 @@ export async function runSourceNowAction(sourceId: string) {
   revalidatePath("/admin/sources");
   revalidatePath("/admin/monitoring");
   revalidatePath("/admin/jobs");
+  if (publishing?.PUBLISHED) revalidatePublicJobDiscovery();
 }
 
 export async function setDiscoveryReviewAction(id: string, status: "REVIEWED" | "DISMISSED") {
@@ -135,6 +137,7 @@ export async function applyDiscoveryToRelatedJobAction(id: string) {
   revalidatePath("/admin/monitoring");
   revalidatePath("/admin/jobs");
   revalidatePath(`/jobs/${discovery.relatedJob.slug}`);
+  revalidatePublicJobDiscovery();
 }
 
 export async function retryDocumentExtractionAction(documentId: string) {

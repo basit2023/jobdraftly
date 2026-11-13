@@ -38,6 +38,8 @@ const authUrl = url("NEXTAUTH_URL");
 if (authUrl && authUrl.protocol !== "https:") failures.push("NEXTAUTH_URL must use HTTPS.");
 const siteUrl = url("NEXT_PUBLIC_SITE_URL");
 if (siteUrl && siteUrl.protocol !== "https:") failures.push("NEXT_PUBLIC_SITE_URL must use HTTPS.");
+if (siteUrl && !siteUrl.hostname.includes(".")) failures.push("NEXT_PUBLIC_SITE_URL must use a fully qualified public hostname, for example https://jobdraftly.com.");
+if (siteUrl && (siteUrl.pathname !== "/" || siteUrl.search || siteUrl.hash)) failures.push("NEXT_PUBLIC_SITE_URL must contain only the canonical origin, with no path, query, or fragment.");
 if (authUrl && siteUrl && authUrl.origin !== siteUrl.origin) failures.push("NEXTAUTH_URL and NEXT_PUBLIC_SITE_URL must use the same canonical origin.");
 const redisUrl = url("REDIS_URL");
 if (redisUrl && redisUrl.protocol !== "rediss:" && !["localhost", "127.0.0.1", "::1"].includes(redisUrl.hostname)) failures.push("Remote REDIS_URL must use rediss://.");
