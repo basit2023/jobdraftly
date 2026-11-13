@@ -14,8 +14,11 @@ import {
 import { EmptyJobs } from "./empty-jobs";
 import { JobCard } from "./job-card";
 import { Pagination } from "./pagination";
+import { experienceLevelLabel, employmentTypeLabel, workplaceTypeLabel } from "@/lib/formatters";
+
 import { FilterPanel } from "../search/filter-panel";
-import { JobFilters } from "../search/job-filters";
+import { JobFilters, postedLabels } from "../search/job-filters";
+import { ActiveFilters, type ActiveFilter } from "../search/active-filters";
 
 function serializableParams(params: RawSearchParams): Record<string, string> {
   return Object.fromEntries(
@@ -42,13 +45,37 @@ export async function JobsIndex({
   breadcrumbs?: { name: string; href: string }[];
   intro?: string;
 }) {
-  const filters = parseJobSearchParams(searchParams);
-  const [results, options] = await Promise.all([
-    searchPublishedJobs(filters, fixed),
-    getSearchOptions(),
-  ]);
-  const filterCount = [filters.company, filters.city, filters.category, filters.employmentType, filters.experienceLevel, filters.workplaceType, filters.salaryMin, filters.salaryMax]
-    .filter((value) => value !== "" && value !== undefined).length;
+  const options = await getSearchOptions();
+  const parsed = parseJobSearchParams(searchParams);
+  // Ignore slugs that don't exist (old or mistyped links) instead of showing zero jobs.
+  const known = (items: { slug: string }[], slug: string) => (items.some((item) => item.slug === slug) ? slug : "");
+  const filters = {
+    ...parsed,
+    province: known(options.provinces, parsed.province),
+    city: known(options.cities, parsed.city),
+    category: known(options.categories, parsed.category),
+  };
+  const results = await searchPublishedJobs(filters, fixed);
+  // On a province page only that province's cities are offered.
+  const provinces = fixed.provinceSlug
+    ? options.provinces.filter((province) => province.slug === fixed.provinceSlug)
+    : options.provinces;
+  const nameOf = (items: { name: string; slug: string }[], slug: string) => items.find((item) => item.slug === slug)?.name ?? slug;
+  const money = (value: number) => `PKR ${value.toLocaleString("en-PK")}`;
+  const active: ActiveFilter[] = [
+    filters.q ? { param: "q", label: `“${filters.q}”` } : null,
+    filters.company ? { param: "company", label: `Company: ${filters.company}` } : null,
+    filters.province && !fixed.provinceSlug ? { param: "province", label: nameOf(options.provinces, filters.province) } : null,
+    filters.city && !fixed.citySlug ? { param: "city", label: nameOf(options.cities, filters.city) } : null,
+    filters.category && !fixed.categorySlug ? { param: "category", label: nameOf(options.categories, filters.category) } : null,
+    filters.employmentType && !fixed.employmentType ? { param: "employmentType", label: employmentTypeLabel(filters.employmentType) } : null,
+    filters.experienceLevel ? { param: "experienceLevel", label: experienceLevelLabel(filters.experienceLevel) } : null,
+    filters.workplaceType && !fixed.workplaceType ? { param: "workplaceType", label: workplaceTypeLabel(filters.workplaceType) } : null,
+    filters.salaryMin !== undefined ? { param: "salaryMin", label: `From ${money(filters.salaryMin)}` } : null,
+    filters.salaryMax !== undefined ? { param: "salaryMax", label: `Up to ${money(filters.salaryMax)}` } : null,
+    filters.postedWithin ? { param: "posted", label: postedLabels[filters.postedWithin] } : null,
+  ].filter((item): item is ActiveFilter => item !== null);
+  const filterCount = active.filter((item) => item.param !== "q").length;
 
   return (
     <>
@@ -75,10 +102,12 @@ export async function JobsIndex({
               <JobFilters
                 action={basePath}
                 categories={options.categories}
-                cities={options.cities}
                 filters={filters}
                 lockCategory={Boolean(fixed.categorySlug)}
                 lockCity={Boolean(fixed.citySlug)}
+                lockProvince={Boolean(fixed.provinceSlug)}
+                majorCities={options.majorCities}
+                provinces={provinces}
                 lockEmploymentType={Boolean(fixed.employmentType)}
                 lockWorkplaceType={Boolean(fixed.workplaceType)}
               />
@@ -97,6 +126,8 @@ export async function JobsIndex({
                   </p>
                 ) : null}
               </div>
+
+              <ActiveFilters basePath={basePath} filters={active} params={serializableParams(searchParams)} />
 
               {results.jobs.length ? (
                 <div className="grid gap-3 xl:grid-cols-2">

@@ -231,6 +231,24 @@ export default async function JobDetailPage({ params }: Props) {
                   </p>
                 )}
 
+                {sourceUrl && sourceUrl !== applicationUrl ? (
+                  <a
+                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-line px-4 text-sm font-medium text-ink hover:border-ink/30"
+                    href={sourceUrl}
+                    rel="nofollow noopener noreferrer"
+                    target="_blank"
+                  >
+                    View original advert
+                    <ExternalLink aria-hidden="true" className="size-4" />
+                  </a>
+                ) : null}
+                {sourceUrl ? (
+                  <p className="mt-2 text-center text-xs text-muted">
+                    Posted on {new URL(sourceUrl).hostname.replace(/^www\./, "")}
+                    {sourceName ? ` · ${sourceName}` : ""}
+                  </p>
+                ) : null}
+
                 <dl className="mt-5 space-y-3 text-sm">
                   <OverviewRow label="Apply by" value={deadline ?? "Not specified"} />
                   {validThrough ? <OverviewRow label="Listing open until" value={validThrough} /> : null}

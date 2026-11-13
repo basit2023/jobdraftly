@@ -1,8 +1,8 @@
-import { z } from "zod";
 
 import { PageHero } from "@/components/layout/page-hero";
 import { Container } from "@/components/ui/container";
 import { pageMetadata } from "@/lib/seo/site";
+import { CONTACT_EMAIL } from "@/lib/site-contact";
 
 export const metadata = pageMetadata({
   title: "Contact us",
@@ -39,8 +39,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Sear
   const topic = Array.isArray(rawTopic) ? rawTopic[0] : rawTopic;
   const defaultSubject = subjects.some((subject) => subject.value === topic) ? topic : "general";
 
-  const emailResult = z.email().safeParse(process.env.NEXT_PUBLIC_CONTACT_EMAIL);
-  const contactEmail = emailResult.success ? emailResult.data : null;
+  const contactEmail = CONTACT_EMAIL;
   const inputClass =
     "min-h-11 w-full rounded-md border border-line bg-white px-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-muted focus:border-brand";
   const labelClass = "mb-1.5 block text-sm font-medium text-ink";

@@ -55,7 +55,8 @@ export const metadata: Metadata = {
     title: "JobDraftly | Jobs in Pakistan",
     description: "Search jobs across Pakistan by city, category, company, and work arrangement.",
   },
-  robots: { index: true, follow: true },
+  // No site-wide `robots` here: pages set it through pageMetadata(), and Next.js adds
+  // `noindex` to 404s automatically. A root value would be emitted alongside that noindex.
   verification: googleSiteVerification
     ? { google: googleSiteVerification }
     : undefined,
@@ -68,7 +69,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`${poppins.variable} ${montserrat.variable}`} lang="en-PK">
-      <body className="font-sans">{children}<AnalyticsScripts /></body>
+      <body className="font-sans" suppressHydrationWarning>{children}<AnalyticsScripts /></body>
     </html>
   );
 }

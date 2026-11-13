@@ -2,14 +2,28 @@ import { access } from "node:fs/promises";
 import path from "node:path";
 
 const failures = [];
+const warnings = [];
 const required = [
   "DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL", "NEXT_PUBLIC_SITE_URL", "CRON_SECRET", "REDIS_URL",
-  "OBJECT_STORAGE_ENDPOINT", "OBJECT_STORAGE_REGION", "OBJECT_STORAGE_BUCKET",
-  "OBJECT_STORAGE_ACCESS_KEY_ID", "OBJECT_STORAGE_SECRET_ACCESS_KEY", "OBJECT_STORAGE_PUBLIC_BASE_URL",
   "MYSQL_BIN_DIR", "BACKUP_DIRECTORY",
 ];
+const s3Variables = [
+  "OBJECT_STORAGE_ENDPOINT", "OBJECT_STORAGE_REGION", "OBJECT_STORAGE_BUCKET",
+  "OBJECT_STORAGE_ACCESS_KEY_ID", "OBJECT_STORAGE_SECRET_ACCESS_KEY", "OBJECT_STORAGE_PUBLIC_BASE_URL",
+];
+const set = (name) => Boolean(process.env[name]?.trim());
 
-for (const name of required) if (!process.env[name]?.trim()) failures.push(`${name} is required.`);
+for (const name of required) if (!set(name)) failures.push(`${name} is required.`);
+
+// Uploaded images need public storage: Cloudinary, or a complete S3-compatible bucket.
+const cloudinaryReady = set("CLOUDINARY_URL") || ["CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"].every(set);
+const s3Ready = s3Variables.every(set);
+if (!cloudinaryReady && !s3Ready) failures.push("Configure image storage: CLOUDINARY_URL (or the three CLOUDINARY_* keys), or all OBJECT_STORAGE_* variables.");
+if (set("CLOUDINARY_URL") && !/^cloudinary:\/\/[^:]+:[^@]+@.+/.test(process.env.CLOUDINARY_URL)) failures.push("CLOUDINARY_URL must look like cloudinary://<key>:<secret>@<cloud name>.");
+
+if (!set("ANTHROPIC_API_KEY")) warnings.push("ANTHROPIC_API_KEY is not set: discovered adverts will be stored but no jobs will be created from them.");
+if (!set("NEXT_PUBLIC_CONTACT_EMAIL")) warnings.push("NEXT_PUBLIC_CONTACT_EMAIL is not set: the default fastsitecheck@gmail.com is used.");
+if (!set("NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION")) warnings.push("NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION is not set: add it to verify the site in Google Search Console.");
 if (process.env.NODE_ENV !== "production") failures.push("NODE_ENV must be production.");
 
 function url(name) {
@@ -27,7 +41,7 @@ if (siteUrl && siteUrl.protocol !== "https:") failures.push("NEXT_PUBLIC_SITE_UR
 if (authUrl && siteUrl && authUrl.origin !== siteUrl.origin) failures.push("NEXTAUTH_URL and NEXT_PUBLIC_SITE_URL must use the same canonical origin.");
 const redisUrl = url("REDIS_URL");
 if (redisUrl && redisUrl.protocol !== "rediss:" && !["localhost", "127.0.0.1", "::1"].includes(redisUrl.hostname)) failures.push("Remote REDIS_URL must use rediss://.");
-for (const name of ["OBJECT_STORAGE_ENDPOINT", "OBJECT_STORAGE_PUBLIC_BASE_URL"]) {
+for (const name of s3Ready ? ["OBJECT_STORAGE_ENDPOINT", "OBJECT_STORAGE_PUBLIC_BASE_URL"] : []) {
   const parsed = url(name);
   if (parsed && parsed.protocol !== "https:") failures.push(`${name} must use HTTPS.`);
 }
@@ -40,8 +54,8 @@ for (const file of [path.join(process.cwd(), ".next", "BUILD_ID"), path.join(pro
 }
 
 if (failures.length) {
-  console.error(JSON.stringify({ status: "failed", checks: failures }, null, 2));
+  console.error(JSON.stringify({ status: "failed", checks: failures, warnings }, null, 2));
   process.exitCode = 1;
 } else {
-  console.log(JSON.stringify({ status: "passed", checks: required.length + 10, message: "No secret values were printed." }, null, 2));
+  console.log(JSON.stringify({ status: "passed", warnings, message: "No secret values were printed." }, null, 2));
 }

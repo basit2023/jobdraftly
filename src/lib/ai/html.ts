@@ -63,3 +63,34 @@ export function endOfPakistanDay(value: string | null | undefined): Date | null 
   const date = new Date(`${value}T23:59:59+05:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 }
+
+function comparableWords(value: string): string[] {
+  return value
+    .normalize("NFKC")
+    .toLocaleLowerCase("en")
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+}
+
+/**
+ * Share of `excerpt` that appears word for word in `original`, from 0 to 1.
+ * Compares overlapping 6-word sequences, so punctuation, bullets and line
+ * breaks don't matter but rewording does. Very short excerpts compare whole words.
+ */
+export function verbatimShare(excerpt: string, original: string): number {
+  const words = comparableWords(excerpt);
+  if (!words.length) return 1;
+  const source = comparableWords(original);
+  const size = Math.min(6, words.length);
+  const sourceGrams = new Set<string>();
+  for (let index = 0; index + size <= source.length; index++) sourceGrams.add(source.slice(index, index + size).join(" "));
+  let total = 0;
+  let found = 0;
+  for (let index = 0; index + size <= words.length; index++) {
+    total++;
+    if (sourceGrams.has(words.slice(index, index + size).join(" "))) found++;
+  }
+  return total ? found / total : 1;
+}

@@ -2,7 +2,7 @@ import "server-only";
 
 import { Prisma, type JobSource, type SourceDiscovery, type SourceDocument } from "@/generated/prisma/client";
 import { type AiJob, aiExtractionIsConfigured, ExtractionRefusedError, extractJobWithClaude, type ExtractionInput } from "@/lib/ai/job-extractor";
-import { endOfPakistanDay, findImageCandidates, htmlToText } from "@/lib/ai/html";
+import { endOfPakistanDay, findImageCandidates, htmlToText, verbatimShare } from "@/lib/ai/html";
 import { db } from "@/lib/db";
 import { assertPublicSourceUrl } from "@/lib/imports/network";
 import { uniqueCompanySlug } from "@/lib/imports/staging";
@@ -112,6 +112,19 @@ async function findOrCreateCompany(name: string, website: string | null, locatio
   });
 }
 
+/** Minimum share of the description that must appear word for word in the original advert. */
+export const MIN_VERBATIM_SHARE = 0.9;
+
+/**
+ * How much of the job text is the employer's original wording (0–1), or null when
+ * the advert was a PDF/image and there is no page text to compare against.
+ */
+export function originalWordingShare(job: Pick<AiJob, "description" | "responsibilities" | "requirements">, advertText: string | null): number | null {
+  if (!advertText) return null;
+  const copied = [job.description, job.responsibilities, job.requirements].filter(Boolean).join("\n");
+  return copied ? verbatimShare(copied, advertText) : 1;
+}
+
 /** Why a job can't go live automatically. Empty array means it qualifies. */
 export function autoPublishBlockers(input: {
   source: Pick<JobSource, "autoPublish">;
@@ -119,8 +132,13 @@ export function autoPublishBlockers(input: {
   hasLocation: boolean;
   hasCategory: boolean;
   applicationUrl: string | null;
+  /** From originalWordingShare(); null skips the check (PDF/image adverts). */
+  wordingShare?: number | null;
 }): string[] {
   const blockers: string[] = [];
+  if (input.wordingShare != null && input.wordingShare < MIN_VERBATIM_SHARE) {
+    blockers.push(`Only ${Math.round(input.wordingShare * 100)}% of the job text matches the original advert word for word.`);
+  }
   if (!input.source.autoPublish) blockers.push("Source is not marked as trusted for auto-publishing.");
   if (input.job.confidence < autoPublishMinConfidence()) blockers.push(`AI confidence ${input.job.confidence.toFixed(2)} is below ${autoPublishMinConfidence()}.`);
   if (!input.job.title?.trim()) blockers.push("Job title is missing.");
@@ -189,7 +207,8 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
       return "PENDING_REVIEW";
     }
 
-    const blockers = autoPublishBlockers({ source: discovery.source, job, hasLocation: true, hasCategory: Boolean(matchByName(reference.categories, job.category)), applicationUrl });
+    const wordingShare = originalWordingShare(job, advert.attachment ? null : advert.text ?? null);
+    const blockers = autoPublishBlockers({ source: discovery.source, job, hasLocation: true, hasCategory: Boolean(matchByName(reference.categories, job.category)), applicationUrl, wordingShare });
     const publish = blockers.length === 0;
 
     const company = await findOrCreateCompany(companyName, job.companyWebsite, location.id);
@@ -282,7 +301,7 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
       entityType: "Job",
       entityId: created.id,
       summary: `${publish ? "Auto-published" : "AI-drafted"} "${title}" from ${discovery.source.name}`,
-      metadata: { discoveryId: discovery.id, confidence: job.confidence, blockers },
+      metadata: { discoveryId: discovery.id, confidence: job.confidence, wordingShare, blockers },
     });
     return publish ? "PUBLISHED" : "PENDING_REVIEW";
   } catch (error) {

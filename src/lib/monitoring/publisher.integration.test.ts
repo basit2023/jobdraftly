@@ -99,7 +99,8 @@ describe.runIf(runDatabaseTests)("AI job publishing pipeline", async () => {
     if (!foundCity || !foundCategory) throw new Error("Development reference data is required.");
     city = foundCity;
     category = foundCategory;
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(`<html><body><h1>Advert</h1><img src="/advert.jpg"></body></html>`, { status: 200, headers: { "content-type": "text/html" } })));
+    // The fake advert page contains the original wording the extractor "copies".
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(`<html><body><h1>Advert</h1><p>${baseJob.description}</p><img src="/advert.jpg"></body></html>`, { status: 200, headers: { "content-type": "text/html" } })));
   });
 
   afterAll(async () => {
@@ -122,10 +123,14 @@ describe.runIf(runDatabaseTests)("AI job publishing pipeline", async () => {
     const lowConfidence = await createDiscovery(trusted.id, "unsure", { confidence: 0.5, title: `Unsure Role ${suffix}` });
     const fromUntrusted = await createDiscovery(untrusted.id, "untrusted", { title: `Untrusted Role ${suffix}` });
     const expired = await createDiscovery(trusted.id, "expired", { applicationDeadline: "2020-01-01" });
+    const reworded = await createDiscovery(trusted.id, "reworded", {
+      title: `Reworded Role ${suffix}`,
+      description: "An exciting opportunity to join a dynamic, fast-growing team and make a real difference every single day in a rewarding role.",
+    });
 
     const trustedResult = await publishDiscoveredJobs({ sourceId: trusted.id });
     const untrustedResult = await publishDiscoveredJobs({ sourceId: untrusted.id });
-    expect(trustedResult).toMatchObject({ processed: 3, PUBLISHED: 1, PENDING_REVIEW: 1, DISMISSED: 1 });
+    expect(trustedResult).toMatchObject({ processed: 4, PUBLISHED: 1, PENDING_REVIEW: 2, DISMISSED: 1 });
     expect(untrustedResult).toMatchObject({ processed: 1, PENDING_REVIEW: 1 });
 
     const live = await db.sourceDiscovery.findUniqueOrThrow({ where: { id: published.id }, include: { relatedJob: true } });
@@ -137,6 +142,10 @@ describe.runIf(runDatabaseTests)("AI job publishing pipeline", async () => {
     });
     expect(live.relatedJob?.expiresAt?.toISOString()).toBe(new Date(`${futureDeadline}T23:59:59+05:00`).toISOString());
     expect(live.relatedJob?.publishedAt).not.toBeNull();
+
+    const rewordedJob = await db.sourceDiscovery.findUniqueOrThrow({ where: { id: reworded.id }, include: { relatedJob: true } });
+    expect(rewordedJob.relatedJob?.status).toBe("PENDING_REVIEW");
+    expect(rewordedJob.extractionError).toMatch(/original advert word for word/);
 
     for (const id of [lowConfidence.id, fromUntrusted.id]) {
       const queued = await db.sourceDiscovery.findUniqueOrThrow({ where: { id }, include: { relatedJob: true } });

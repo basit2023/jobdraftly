@@ -18,7 +18,8 @@ type Props = {
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
   const city = await getPublicCityBySlug(slug);
-  if (!city) return { title: "City not found", robots: { index: false, follow: false } };
+  // Resolve 404s here: metadata runs before streaming, so the response gets a real 404 status.
+  if (!city) notFound();
   const [count, query] = await Promise.all([countPublishedJobs({ citySlug: city.slug }), searchParams]);
   const filtered = Object.values(query).some((value) => Array.isArray(value) ? value.some(Boolean) : Boolean(value));
 

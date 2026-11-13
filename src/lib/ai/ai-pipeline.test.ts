@@ -123,3 +123,26 @@ describe("Cloudinary configuration", () => {
     expect(cloudinarySignature({ timestamp: "1", public_id: "b", folder: "a" }, "secret")).toBe(expected);
   });
 });
+
+describe("original advert wording", async () => {
+  const { verbatimShare } = await import("./html");
+  const { originalWordingShare, MIN_VERBATIM_SHARE } = await import("@/lib/monitoring/publisher");
+  const advert = "Applications are invited for the post of Assistant (BPS-15).\n• Bachelor's degree (second division)\n• Age 18–30 years";
+
+  it("accepts text copied word for word, ignoring bullets, case and line breaks", () => {
+    expect(verbatimShare("applications are invited for the post of ASSISTANT (BPS-15). Bachelor's degree (second division)", advert)).toBe(1);
+  });
+
+  it("rejects reworded text", () => {
+    expect(verbatimShare("We are looking for a motivated Assistant to join our government office team.", advert)).toBeLessThan(MIN_VERBATIM_SHARE);
+  });
+
+  it("skips the check when there is no page text (PDF or image adverts)", () => {
+    expect(originalWordingShare({ description: "anything", responsibilities: null, requirements: null }, null)).toBeNull();
+  });
+
+  it("holds back auto-publishing when the wording was rewritten", () => {
+    const blockers = autoPublishBlockers({ source: { autoPublish: true }, job: goodJob, hasLocation: true, hasCategory: true, applicationUrl: "https://example.com", wordingShare: 0.4 });
+    expect(blockers.join(" ")).toMatch(/40% of the job text matches the original advert/);
+  });
+});

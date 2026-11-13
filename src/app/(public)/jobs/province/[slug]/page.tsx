@@ -27,9 +27,8 @@ function hasFilters(query: RawSearchParams) {
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
   const province = await getPublicProvinceBySlug(slug);
-  if (!province) {
-    return { title: "Province not found", robots: { index: false, follow: false } };
-  }
+  // Resolve 404s here: metadata runs before streaming, so the response gets a real 404 status.
+  if (!province) notFound();
   const [count, query] = await Promise.all([
     countPublishedJobs({ provinceSlug: province.slug }),
     searchParams,

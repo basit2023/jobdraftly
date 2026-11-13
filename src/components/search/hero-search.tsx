@@ -4,8 +4,9 @@ import { ChevronDown, MapPin, Search } from "lucide-react";
 import { SearchButton } from "./search-button";
 
 type CityOption = { name: string; slug: string };
+type ProvinceOption = CityOption & { cities: CityOption[] };
 
-export function HeroSearch({ cities }: { cities: CityOption[] }) {
+export function HeroSearch({ majorCities, provinces }: { majorCities: CityOption[]; provinces: ProvinceOption[] }) {
   return (
     <Form
       action="/jobs"
@@ -38,10 +39,23 @@ export function HeroSearch({ cities }: { cities: CityOption[] }) {
           name="city"
         >
           <option value="">All of Pakistan</option>
-          {cities.map((city) => (
-            <option key={city.slug} value={city.slug}>
-              {city.name}
-            </option>
+          {majorCities.length ? (
+            <optgroup label="Major cities">
+              {majorCities.map((city) => (
+                <option key={`major-${city.slug}`} value={city.slug}>
+                  {city.name}
+                </option>
+              ))}
+            </optgroup>
+          ) : null}
+          {provinces.map((province) => (
+            <optgroup key={province.slug} label={province.name}>
+              {province.cities.map((city) => (
+                <option key={city.slug} value={city.slug}>
+                  {city.name}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
         <ChevronDown

@@ -51,6 +51,15 @@ The administrator area provides dashboard statistics, job and company CRUD, cate
 
 Create and document real sources at `/admin/sources`, then use `/admin/imports/new` for CSV or an approved connector. The importer never publishes automatically. Configure `CRON_SECRET` and schedule an authenticated daily `POST /api/cron/expire-jobs` to expire due vacancies. See [IMPORTS.md](IMPORTS.md) for mapping, permission, review, duplicate, and scheduler operations.
 
+## Going live (checklist)
+
+1. Set every value `npm run prod:preflight` asks for on the server (database account that is not root, `NEXTAUTH_SECRET` and `CRON_SECRET` of 32+ characters, HTTPS `NEXTAUTH_URL`/`NEXT_PUBLIC_SITE_URL`, `REDIS_URL`, Cloudinary keys, backup settings), then run it with `NODE_ENV=production` until it passes.
+2. `npx prisma migrate deploy` to create the tables.
+3. `npm run db:reference-data` to load the 24 categories, 7 provinces and 117 cities. It is safe to re-run after adding cities to `src/lib/reference-data/locations.ts`.
+4. `npm run admin:create` once, then remove `ADMIN_PASSWORD` from the environment.
+5. `npm run build`, then run `npm start` and `npm run worker` as two processes.
+6. Check `/api/health/live`, `/api/health/ready` and `/api/health/worker` return 200.
+
 ## Automated job posting
 
 1. Add `ANTHROPIC_API_KEY` and the Cloudinary values (`CLOUDINARY_URL`, or the three separate keys) to `.env.local`. See `.env.example`.
@@ -82,6 +91,9 @@ Create and document real sources at `/admin/sources`, then use `/admin/imports/n
 | `npm run admin:create` | Create one environment-backed administrator securely |
 | `npm run worker:dev` | Run the scheduler locally (no Redis needed) |
 | `npm run jobs:run-once` | Run scan → AI publish → sync → expiry once |
+| `npm run db:reference-data` | Load categories, provinces and cities (safe on production) |
+| `npm run sample:seed` | Add fictional sample jobs for local testing (`-- --remove` deletes them) |
+| `npm run db:repair-local` | Report MyISAM tables / missing foreign keys in a local DB (`-- --apply` fixes them) |
 
 Never use production credentials locally or apply unreviewed migrations to production. The existing live website is not modified or deployed by this project.
 

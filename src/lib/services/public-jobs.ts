@@ -6,6 +6,7 @@ import type {
   WorkplaceType,
 } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { majorCityRank } from "@/lib/reference-data/locations";
 import type { JobSearchFilters } from "@/lib/validations/job-search";
 
 const jobCardSelect = {
@@ -112,15 +113,21 @@ export async function searchPublishedJobs(
 
   if (categorySlug) conditions.push({ category: { slug: categorySlug } });
   if (citySlug) conditions.push({ location: { slug: citySlug } });
-  if (fixed.provinceSlug) {
+  const provinceSlug = fixed.provinceSlug ?? filters.province;
+  if (provinceSlug) {
+    // A province matches jobs posted to the province itself or to any of its cities.
     conditions.push({
       location: {
         OR: [
-          { slug: fixed.provinceSlug, type: "PROVINCE" },
-          { province: { is: { slug: fixed.provinceSlug } } },
+          { slug: provinceSlug, type: "PROVINCE" },
+          { province: { is: { slug: provinceSlug } } },
         ],
       },
     });
+  }
+  if (filters.postedWithin) {
+    const since = new Date(now.getTime() - Number(filters.postedWithin) * 86_400_000);
+    conditions.push({ OR: [{ originalPublishedAt: { gte: since } }, { originalPublishedAt: null, publishedAt: { gte: since } }] });
   }
   if (employmentType) {
     conditions.push({ employmentType });
@@ -155,7 +162,9 @@ export async function searchPublishedJobs(
   const where: Prisma.JobWhereInput = { AND: conditions };
   const relevanceTerm = sanitizedRelevanceTerm(filters.q);
   const orderBy: Prisma.JobOrderByWithRelationInput[] =
-    filters.sort === "relevance" && relevanceTerm
+    filters.sort === "deadline"
+      ? [{ applicationDeadline: { sort: "asc", nulls: "last" } }, { publishedAt: "desc" }]
+      : filters.sort === "relevance" && relevanceTerm
       ? [
           {
             _relevance: {
@@ -193,28 +202,40 @@ export async function searchPublishedJobs(
   };
 }
 
-export async function getSearchOptions() {
-  const [categories, cities] = await Promise.all([
+export const getSearchOptions = cache(async () => {
+  const [categories, provinces] = await Promise.all([
     db.jobCategory.findMany({
       where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       select: { name: true, slug: true },
     }),
     db.jobLocation.findMany({
-      where: { isActive: true, type: "CITY" },
-      orderBy: [{ name: "asc" }],
-      select: { name: true, slug: true },
+      where: { isActive: true, type: "PROVINCE" },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: {
+        name: true,
+        slug: true,
+        cities: {
+          where: { isActive: true, type: "CITY" },
+          orderBy: [{ name: "asc" }],
+          select: { name: true, slug: true },
+        },
+      },
     }),
   ]);
+  const cities = provinces.flatMap((province) => province.cities).sort((a, b) => a.name.localeCompare(b.name));
+  const majorCities = cities
+    .filter((city) => majorCityRank(city.slug) !== Number.MAX_SAFE_INTEGER)
+    .sort((a, b) => majorCityRank(a.slug) - majorCityRank(b.slug));
 
-  return { categories, cities };
-}
+  return { categories, provinces, cities, majorCities };
+});
 
 export async function getHomepageData() {
   const now = new Date();
   const publicWhere = publishedJobWhere(now);
 
-  const [categories, cities, latestJobs, featuredJobs, featuredCompanies] =
+  const [categories, cities, latestJobs, featuredJobs, featuredCompanies, provinceRows] =
     await Promise.all([
       db.jobCategory.findMany({
         where: { isActive: true },
@@ -225,7 +246,6 @@ export async function getHomepageData() {
       db.jobLocation.findMany({
         where: { isActive: true, type: "CITY" },
         orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-        take: 24,
         include: { _count: { select: { jobs: { where: publicWhere } } } },
       }),
       db.job.findMany({
@@ -250,14 +270,36 @@ export async function getHomepageData() {
         take: 8,
         include: { _count: { select: { jobs: { where: publicWhere } } } },
       }),
+      db.jobLocation.findMany({
+        where: { isActive: true, type: "PROVINCE" },
+        orderBy: [{ sortOrder: "asc" }],
+        include: { _count: { select: { jobs: { where: publicWhere } } } },
+      }),
     ]);
 
+  // A province's total = jobs posted to the province itself + jobs in its cities.
+  const provinces = provinceRows.map((province) => {
+    const provinceCities = cities
+      .filter((city) => city.provinceId === province.id)
+      .sort((a, b) => b._count.jobs - a._count.jobs || a.sortOrder - b.sortOrder);
+    return {
+      id: province.id,
+      name: province.name,
+      slug: province.slug,
+      jobCount: province._count.jobs + provinceCities.reduce((sum, city) => sum + city._count.jobs, 0),
+      cityCount: provinceCities.length,
+      topCities: provinceCities.slice(0, 4).map(({ name, slug }) => ({ name, slug })),
+    };
+  });
+
   return {
+    provinces,
     categories: [...categories].sort(
       (a, b) => b._count.jobs - a._count.jobs || a.sortOrder - b.sortOrder,
     ).slice(0, 8),
+    // Busiest cities first; with few jobs, fall back to the biggest cities rather than A–Z.
     cities: [...cities].sort(
-      (a, b) => b._count.jobs - a._count.jobs || a.name.localeCompare(b.name),
+      (a, b) => b._count.jobs - a._count.jobs || majorCityRank(a.slug) - majorCityRank(b.slug) || a.name.localeCompare(b.name),
     ).slice(0, 12),
     latestJobs,
     featuredJobs,

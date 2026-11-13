@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Logo } from "./logo";
+import { CONTACT_EMAIL } from "@/lib/site-contact";
 
 const columns = [
   {
@@ -63,7 +64,12 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:justify-between">
-          <p>© {new Date().getFullYear()} JobDraftly</p>
+          <p>
+            © {new Date().getFullYear()} JobDraftly ·{" "}
+            <a className="hover:text-white" href={`mailto:${CONTACT_EMAIL}`}>
+              {CONTACT_EMAIL}
+            </a>
+          </p>
           <p>We never charge job seekers to apply.</p>
         </div>
       </div>

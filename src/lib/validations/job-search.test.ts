@@ -21,6 +21,7 @@ describe("parseJobSearchParams", () => {
     ).toEqual({
       q: "software engineer",
       company: "Acme",
+      province: "",
       city: "lahore",
       category: "engineering",
       employmentType: "FULL_TIME",
@@ -28,6 +29,7 @@ describe("parseJobSearchParams", () => {
       workplaceType: "HYBRID",
       salaryMin: 50000,
       salaryMax: 250000,
+      postedWithin: "",
       sort: "newest",
       page: 3,
     });

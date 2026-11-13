@@ -29,7 +29,8 @@ function publicWebsite(value: string | null): string | null {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const company = await getPublicCompanyBySlug(slug);
-  if (!company) return { title: "Company not found", robots: { index: false, follow: false } };
+  // Resolve 404s here: metadata runs before streaming, so the response gets a real 404 status.
+  if (!company) notFound();
 
   return pageMetadata({
     title: `${company.name} Jobs`,

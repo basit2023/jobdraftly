@@ -10,7 +10,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/site";
 import { buildWebsite } from "@/lib/seo/structured-data";
-import { getHomepageData } from "@/lib/services/public-jobs";
+import { getHomepageData, getSearchOptions } from "@/lib/services/public-jobs";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +45,7 @@ function jobCount(count: number): string {
 }
 
 export default async function HomePage() {
-  const data = await getHomepageData();
+  const [data, searchOptions] = await Promise.all([getHomepageData(), getSearchOptions()]);
   const quickCities = data.cities.slice(0, 5);
 
   return (
@@ -65,7 +65,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-8 max-w-4xl">
-            <HeroSearch cities={data.cities} />
+            <HeroSearch majorCities={searchOptions.majorCities} provinces={searchOptions.provinces} />
             {quickCities.length ? (
               <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-body">
                 <span className="text-muted">Popular:</span>
@@ -181,6 +181,37 @@ export default async function HomePage() {
               </div>
             ) : null}
           </div>
+        </Container>
+      </section>
+
+      {/* Provinces */}
+      <section className="border-t border-line bg-white py-14 sm:py-16">
+        <Container>
+          <SectionHeading title="Jobs by province" />
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {data.provinces.map((province) => (
+              <li className="rounded-lg border border-line p-4" key={province.id}>
+                <Link className="group flex items-baseline justify-between gap-3" href={`/jobs/province/${province.slug}`}>
+                  <span className="font-semibold text-ink group-hover:text-brand">{province.name}</span>
+                  <span className="shrink-0 text-sm text-muted">{jobCount(province.jobCount)}</span>
+                </Link>
+                {province.topCities.length > 1 ? (
+                  <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-body">
+                    {province.topCities.map((city) => (
+                      <Link className="hover:text-ink hover:underline" href={`/jobs/city/${city.slug}`} key={city.slug}>
+                        {city.name}
+                      </Link>
+                    ))}
+                    {province.cityCount > province.topCities.length ? (
+                      <Link className="text-muted hover:text-ink hover:underline" href={`/jobs/province/${province.slug}`}>
+                        +{province.cityCount - province.topCities.length} more
+                      </Link>
+                    ) : null}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </Container>
       </section>
 

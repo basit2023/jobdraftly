@@ -19,7 +19,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const { slug } = await params;
   const category = await getPublicCategoryBySlug(slug);
 
-  if (!category) return { title: "Job category not found", robots: { index: false, follow: false } };
+  // Resolve 404s here: metadata runs before streaming, so the response gets a real 404 status.
+  if (!category) notFound();
   const [count, query] = await Promise.all([countPublishedJobs({ categorySlug: category.slug }), searchParams]);
   const filtered = Object.values(query).some((value) => Array.isArray(value) ? value.some(Boolean) : Boolean(value));
 

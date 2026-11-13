@@ -14,9 +14,9 @@ export const aiJobSchema = z.object({
   title: z.string().nullable().describe("Job title exactly as advertised. If several posts are advertised, the main or first one."),
   companyName: z.string().nullable().describe("Hiring employer or government department, not the job board."),
   companyWebsite: z.string().nullable(),
-  description: z.string().nullable().describe("2-4 short paragraphs in your own plain English, using only facts from the advert."),
-  responsibilities: z.string().nullable().describe("Newline-separated list, only if stated."),
-  requirements: z.string().nullable().describe("Newline-separated list of qualifications/experience, only if stated."),
+  description: z.string().nullable().describe("The advert's own description of the job, copied word for word. Do not summarise, paraphrase or translate."),
+  responsibilities: z.string().nullable().describe("The advert's own list of duties, copied word for word, one item per line. Null if the advert has none."),
+  requirements: z.string().nullable().describe("The advert's own eligibility/qualification text, copied word for word, one item per line. Null if the advert has none."),
   skills: z.array(z.string()).describe("Up to 10 concrete skills that are named in the advert."),
   employmentType: z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "TEMPORARY", "INTERNSHIP", "FREELANCE", "OTHER"]),
   experienceLevel: z.enum(["NOT_SPECIFIED", "ENTRY_LEVEL", "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "MANAGER", "DIRECTOR", "EXECUTIVE"]),
@@ -56,7 +56,8 @@ const SYSTEM_PROMPT = `You extract job vacancy details for JobDraftly, a job boa
 
 Rules:
 - Use only information present in the supplied advert. Never invent salaries, deadlines, links, employers or requirements; use null when something is not stated.
-- Write the description in your own words (plain, neutral English). Do not copy long passages verbatim and do not add marketing language.
+- description, responsibilities and requirements must be the employer's ORIGINAL wording, copied exactly from the advert (same words, same language, same order). Never rewrite, shorten into a summary, translate, or add words of your own. You may only drop text that is not part of the job advert (site menus, cookie notices, unrelated links) and tidy line breaks.
+- The structured fields (title, location, category, dates, salary, employment type and so on) are the only place where you interpret the advert.
 - "location" and "category" must be copied exactly from the allowed lists. If the advert covers several cities in one province, use the province. If nothing fits, use null.
 - Image URLs must be copied exactly from the candidate image list; otherwise null.
 - Dates are YYYY-MM-DD. Interpret Pakistani dates (DD/MM/YYYY) correctly.

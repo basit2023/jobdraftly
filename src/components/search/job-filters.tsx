@@ -7,6 +7,9 @@ import type { JobSearchFilters } from "@/lib/validations/job-search";
 import { SearchButton } from "./search-button";
 
 type Option = { name: string; slug: string };
+type ProvinceOption = Option & { cities: Option[] };
+
+export const postedLabels = { "1": "Last 24 hours", "3": "Last 3 days", "7": "Last 7 days", "30": "Last 30 days" } as const;
 
 const employmentOptions = [
   ["FULL_TIME", "Full-time"],
@@ -32,18 +35,22 @@ export function JobFilters({
   action,
   filters,
   categories,
-  cities,
+  provinces,
+  majorCities,
   lockCategory = false,
   lockCity = false,
+  lockProvince = false,
   lockEmploymentType = false,
   lockWorkplaceType = false,
 }: {
   action: string;
   filters: JobSearchFilters;
   categories: Option[];
-  cities: Option[];
+  provinces: ProvinceOption[];
+  majorCities: Option[];
   lockCategory?: boolean;
   lockCity?: boolean;
+  lockProvince?: boolean;
   lockEmploymentType?: boolean;
   lockWorkplaceType?: boolean;
 }) {
@@ -86,14 +93,40 @@ export function JobFilters({
           />
         </Field>
 
+        {!lockProvince && !lockCity ? (
+          <Field label="Province">
+            <select className={inputClass} defaultValue={filters.province} name="province">
+              <option value="">All of Pakistan</option>
+              {provinces.map((province) => (
+                <option key={province.slug} value={province.slug}>
+                  {province.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : null}
+
         {!lockCity ? (
           <Field label="City">
             <select className={inputClass} defaultValue={filters.city} name="city">
               <option value="">All cities</option>
-              {cities.map((city) => (
-                <option key={city.slug} value={city.slug}>
-                  {city.name}
-                </option>
+              {!lockProvince && majorCities.length ? (
+                <optgroup label="Major cities">
+                  {majorCities.map((city) => (
+                    <option key={`major-${city.slug}`} value={city.slug}>
+                      {city.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+              {provinces.map((province) => (
+                <optgroup key={province.slug} label={province.name}>
+                  {province.cities.map((city) => (
+                    <option key={city.slug} value={city.slug}>
+                      {city.name}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </Field>
@@ -188,10 +221,22 @@ export function JobFilters({
           </Field>
         </div>
 
+        <Field label="Date posted">
+          <select className={inputClass} defaultValue={filters.postedWithin} name="posted">
+            <option value="">Any time</option>
+            {Object.entries(postedLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </Field>
+
         <Field label="Sort by">
           <select className={inputClass} defaultValue={filters.sort} name="sort">
             <option value="relevance">Best match</option>
             <option value="newest">Newest first</option>
+            <option value="deadline">Closing soon</option>
           </select>
         </Field>
 

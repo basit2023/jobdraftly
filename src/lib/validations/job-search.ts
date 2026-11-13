@@ -24,6 +24,10 @@ const experienceLevels = [
 
 const workplaceTypes = ["ONSITE", "HYBRID", "REMOTE"] as const;
 
+/** "Date posted" filter values, in days. */
+export const postedWithinOptions = ["1", "3", "7", "30"] as const;
+export const sortOptions = ["relevance", "newest", "deadline"] as const;
+
 export type RawSearchParams = Record<
   string,
   string | string[] | undefined
@@ -62,6 +66,7 @@ export function parseJobSearchParams(params: RawSearchParams) {
   return {
     q: text(params.q),
     company: text(params.company),
+    province: text(params.province, 191),
     city: text(params.city, 191),
     category: text(params.category, 191),
     employmentType: enumValue(employmentTypes, params.employmentType),
@@ -69,7 +74,8 @@ export function parseJobSearchParams(params: RawSearchParams) {
     workplaceType: enumValue(workplaceTypes, params.workplaceType),
     salaryMin: optionalMoney(params.salaryMin),
     salaryMax: optionalMoney(params.salaryMax),
-    sort: first(params.sort) === "newest" ? "newest" : "relevance",
+    postedWithin: enumValue(postedWithinOptions, params.posted),
+    sort: enumValue(sortOptions, params.sort) || "relevance",
     page: pageResult.success ? pageResult.data : 1,
   } as const;
 }
