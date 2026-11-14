@@ -36,7 +36,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        <Logo onClick={() => setOpen(false)} />
+        <Logo onClick={() => setOpen(false)} preload />
 
         <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
           {navigation.map((item) => {

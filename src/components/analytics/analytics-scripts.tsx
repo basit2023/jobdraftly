@@ -1,14 +1,34 @@
 import Script from "next/script";
 
+const DEFAULT_TAG_MANAGER_ID = "GTM-WFDVNXZ4";
+
 export function AnalyticsScripts() {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
-  if (!measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) return null;
+  const configuredId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
+  const tagManagerId = configuredId && /^GTM-[A-Z0-9]+$/.test(configuredId)
+    ? configuredId
+    : DEFAULT_TAG_MANAGER_ID;
+
   return (
     <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />
-      <Script id="jobdraftly-ga4" strategy="afterInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','${measurementId}',{anonymize_ip:true});`}
+      <Script id="jobdraftly-gtm-init" strategy="afterInteractive">
+        {`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});function gtag(){window.dataLayer.push(arguments)};gtag('js',new Date());`}
       </Script>
+      <Script
+        async
+        id="jobdraftly-gtm"
+        src={`https://www.googletagmanager.com/gtm.js?id=${tagManagerId}`}
+        strategy="afterInteractive"
+      />
+      <noscript>
+        <iframe
+          aria-hidden="true"
+          height="0"
+          src={`https://www.googletagmanager.com/ns.html?id=${tagManagerId}`}
+          style={{ display: "none", visibility: "hidden" }}
+          title="Google Tag Manager"
+          width="0"
+        />
+      </noscript>
     </>
   );
 }
