@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Prisma, type JobSource, type SourceDiscovery, type SourceDocument } from "@/generated/prisma/client";
-import { type AiJob, aiExtractionIsConfigured, ExtractionRefusedError, extractJobWithClaude, type ExtractionInput } from "@/lib/ai/job-extractor";
+import { type AiJob, aiExtractionIsConfigured, ExtractionRefusedError, extractJobWithOpenAI, type ExtractionInput } from "@/lib/ai/job-extractor";
 import { endOfPakistanDay, findImageCandidates, htmlToText, verbatimShare } from "@/lib/ai/html";
 import { db } from "@/lib/db";
 import { assertPublicSourceUrl } from "@/lib/imports/network";
@@ -161,7 +161,7 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
   try {
     const advert = await fetchAdvert(discovery);
     const reference = await referenceData();
-    const job = await extractJobWithClaude({
+    const job = await extractJobWithOpenAI({
       sourceName: discovery.source.name,
       pageUrl: discovery.canonicalUrl,
       text: advert.text,
@@ -322,7 +322,7 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
 /* ------------------------------------------------------------------ */
 
 /**
- * Turns newly discovered adverts into job posts using Claude.
+ * Turns newly discovered adverts into job posts using OpenAI.
  * Trusted sources with confident, complete extractions go live; everything else waits for review.
  */
 export async function publishDiscoveredJobs(options: { sourceId?: string; limit?: number; now?: Date } = {}) {

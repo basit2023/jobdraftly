@@ -4,12 +4,12 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import type { AiJob } from "@/lib/ai/job-extractor";
 
-// Claude, outbound network and Cloudinary are replaced so the test is free and offline.
+// OpenAI, outbound network and Cloudinary are replaced so the test is free and offline.
 const extractions = new Map<string, Partial<AiJob>>();
 vi.mock("@/lib/ai/job-extractor", () => ({
   aiExtractionIsConfigured: () => true,
   ExtractionRefusedError: class extends Error {},
-  extractJobWithClaude: vi.fn(async (input: { pageUrl: string }) => ({ ...baseJob, ...extractions.get(input.pageUrl) })),
+  extractJobWithOpenAI: vi.fn(async (input: { pageUrl: string }) => ({ ...baseJob, ...extractions.get(input.pageUrl) })),
 }));
 vi.mock("@/lib/imports/network", () => ({ assertPublicSourceUrl: async (value: string) => new URL(value) }));
 vi.mock("@/lib/storage/object-store", () => ({

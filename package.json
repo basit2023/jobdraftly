@@ -34,7 +34,6 @@
     "admin:create": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0",
     "@aws-sdk/client-s3": "^3.1166.0",
     "@hookform/resolvers": "7.0.3",
     "@prisma/adapter-mariadb": "7.10.1",
@@ -45,6 +44,7 @@
     "lucide-react": "1.70.0",
     "next": "16.4.5",
     "next-auth": "4.24.15",
+    "openai": "^7.57.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-hook-form": "7.91.0",

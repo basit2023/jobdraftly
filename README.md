@@ -64,10 +64,10 @@ For the GitHub Actions pipeline, Windows runner setup, MySQL creation commands, 
 
 ## Automated job posting
 
-1. Add `ANTHROPIC_API_KEY` and the Cloudinary values (`CLOUDINARY_URL`, or the three separate keys) to `.env.local`. See `.env.example`.
+1. Add `OPENAI_API_KEY` and the Cloudinary values (`CLOUDINARY_URL`, or the three separate keys) to `.env.local`. See `.env.example`.
 2. In `/admin/sources`, create a source with its feed or page URL, document its terms and permission, and approve it.
 3. Under the source, choose a monitoring mode and frequency, tick **Enabled**, and tick **Trusted: auto-publish AI jobs** only for sources you trust.
-4. Run `npm run worker:dev` in a second terminal while `npm run dev` is running. Every minute it checks due sources, has Claude extract new adverts, publishes or queues them, closes jobs whose advert was removed, and every 15 minutes expires jobs past their deadline.
+4. Run `npm run worker:dev` in a second terminal while `npm run dev` is running. Every minute it checks due sources, has OpenAI extract new adverts, publishes or queues them, closes jobs whose advert was removed, and every 15 minutes expires jobs past their deadline.
 5. Review held-back jobs under `/admin/jobs` (status *Pending review*); the reasons are in the admin notifications.
 
 `npm run jobs:run-once` runs the same pipeline once and prints a summary, which is handy for testing or for Windows Task Scheduler. In production, run `npm run worker` with `REDIS_URL` set, or call the authenticated `POST /api/cron/monitor-sources` and `POST /api/cron/expire-jobs` endpoints from a scheduler.

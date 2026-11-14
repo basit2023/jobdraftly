@@ -21,7 +21,7 @@ const s3Ready = s3Variables.every(set);
 if (!cloudinaryReady && !s3Ready) failures.push("Configure image storage: CLOUDINARY_URL (or the three CLOUDINARY_* keys), or all OBJECT_STORAGE_* variables.");
 if (set("CLOUDINARY_URL") && !/^cloudinary:\/\/[^:]+:[^@]+@.+/.test(process.env.CLOUDINARY_URL)) failures.push("CLOUDINARY_URL must look like cloudinary://<key>:<secret>@<cloud name>.");
 
-if (!set("ANTHROPIC_API_KEY")) warnings.push("ANTHROPIC_API_KEY is not set: discovered adverts will be stored but no jobs will be created from them.");
+if (!set("OPENAI_API_KEY")) warnings.push("OPENAI_API_KEY is not set: discovered adverts will be stored but no jobs will be created from them.");
 if (!set("NEXT_PUBLIC_CONTACT_EMAIL")) warnings.push("NEXT_PUBLIC_CONTACT_EMAIL is not set: the default fastsitecheck@gmail.com is used.");
 if (!set("NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION")) warnings.push("NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION is not set: add it to verify the site in Google Search Console.");
 if (process.env.NODE_ENV !== "production") failures.push("NODE_ENV must be production.");
