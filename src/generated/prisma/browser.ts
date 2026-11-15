@@ -107,3 +107,14 @@ export type JobTag = Prisma.JobTagModel
  * 
  */
 export type JobTagAssignment = Prisma.JobTagAssignmentModel
+/**
+ * Model EmployerUser
+ * A person who signs in to /employer on behalf of one company. Created by an
+ * administrator (owners) or by the company owner (recruiters).
+ */
+export type EmployerUser = Prisma.EmployerUserModel
+/**
+ * Model JobApplication
+ * A candidate's application to an ON_SITE job. The CV lives in private storage.
+ */
+export type JobApplication = Prisma.JobApplicationModel

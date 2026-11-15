@@ -1,9 +1,10 @@
 import type { AdminFormState } from "@/lib/validations/admin-forms";
 
-export function FormMessage({ state }: { state: AdminFormState }) {
+export function FormMessage({ state, messageRef }: { state: AdminFormState; messageRef?: React.Ref<HTMLDivElement> }) {
   if (!state.message) return null;
   return (
     <div
+      ref={messageRef}
       aria-live="polite"
       className={`rounded-xl p-4 text-sm ${state.success ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"}`}
     >

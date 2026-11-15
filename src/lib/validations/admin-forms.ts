@@ -72,7 +72,7 @@ export const jobAdminSchema = z
       z.enum(["HOUR", "DAY", "WEEK", "MONTH", "YEAR"]).nullable(),
     ),
     workplaceType: z.enum(["NOT_SPECIFIED", "ONSITE", "HYBRID", "REMOTE"]),
-    applicationMethod: z.enum(["EXTERNAL_URL", "EMAIL", "INSTRUCTIONS"]),
+    applicationMethod: z.enum(["EXTERNAL_URL", "EMAIL", "INSTRUCTIONS", "ON_SITE"]),
     applicationUrl: optionalUrl,
     sourceId: optionalText(30),
     sourceUrl: optionalUrl,

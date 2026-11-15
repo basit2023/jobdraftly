@@ -13,6 +13,9 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // Integration tests share one database (e.g. job expiry touches every job), so test
+    // files run one after another to keep results deterministic.
+    fileParallelism: false,
     exclude: ["e2e/**", "node_modules/**"],
     coverage: {
       reporter: ["text", "json", "html"],

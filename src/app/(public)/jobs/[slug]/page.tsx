@@ -25,6 +25,7 @@ import {
 } from "@/lib/services/public-jobs";
 import { pageMetadata } from "@/lib/seo/site";
 import { buildBreadcrumbList, buildJobPosting } from "@/lib/seo/structured-data";
+import { ApplyForm } from "@/components/jobs/apply-form";
 
 export const dynamic = "force-dynamic";
 
@@ -222,7 +223,9 @@ export default async function JobDetailPage({ params }: Props) {
 
             <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
               <div className="rounded-lg border border-line bg-white p-5">
-                {applicationUrl ? (
+                {job.applicationMethod === "ON_SITE" ? (
+                  <ApplyForm companyName={job.company.name} jobId={job.id} jobTitle={job.title} />
+                ) : applicationUrl ? (
                   <TrackedApplicationLink href={applicationUrl} jobId={job.id} slug={job.slug} />
                 ) : (
                   <p className="rounded-md bg-amber-50 p-3 text-sm leading-6 text-amber-900">

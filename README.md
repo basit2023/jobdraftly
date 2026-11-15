@@ -62,6 +62,18 @@ For the GitHub Actions pipeline, Windows runner setup, MySQL creation commands, 
 5. `npm run build`, then run `npm start` and `npm run worker` as two processes.
 6. Check `/api/health/live`, `/api/health/ready` and `/api/health/worker` return 200.
 
+## Company accounts (employer portal)
+
+Companies post their own jobs and review applicants at `/employer`.
+
+1. **Create a login:** Admin → Companies → open the company → *Company logins* → *Create login*. Copy the one-time setup link and send it to the person (WhatsApp or email). It works once and expires after 72 hours. The same panel issues password-reset links and can switch a login off instantly.
+2. **Verification controls publishing:** jobs from companies ticked *Verified* go live immediately. Jobs from other companies wait in Admin → Jobs (status *Pending review*), including edits to an already-live job.
+3. **What companies can do:** post, edit, close and reopen jobs (open for up to 90 days); see views, apply clicks and applications per job, plus a 14-day trend; move applicants through New → Reviewing → Shortlisted → Interview → Offer made → Hired / Not selected, with private team notes; owners add recruiters and edit the company profile.
+4. **Applying:** jobs set to *Apply on JobDraftly* show an apply form. Candidates send name, email, mobile and a PDF/Word CV (max 5 MB, checked by content). One application per email per job, 10 per hour per connection.
+5. **CVs are private:** they are stored in `PRIVATE_STORAGE_DIR` (default `./storage/private`, gitignored) or a private S3 bucket (`PRIVATE_STORAGE_S3_BUCKET`), never under `/public`. They are only served to that company's signed-in staff and to admins. Back this folder up together with the database. Applications are deleted after `APPLICATION_RETENTION_DAYS` (default 365) by the worker.
+
+`npm run sample:seed` creates two sample company logins (one verified, one not) and prints their setup links.
+
 ## Automated job posting
 
 1. Add `OPENAI_API_KEY` and the Cloudinary values (`CLOUDINARY_URL`, or the three separate keys) to `.env.local`. See `.env.example`.

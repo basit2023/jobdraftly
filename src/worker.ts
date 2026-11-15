@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { runDueSourceMonitors } from "@/lib/monitoring/runner";
 import { logger } from "@/lib/observability/logger";
 import { closeRedis, getRedisClient } from "@/lib/redis";
+import { purgeOldApplications } from "@/lib/services/applications";
 import { expireDueJobs } from "@/lib/services/job-expiration";
 
 const prefix = process.env.REDIS_KEY_PREFIX || "jobdraftly";
@@ -33,7 +34,9 @@ let lastExpiryRunAt = 0;
 async function runJobs(canRunExpiry: () => Promise<boolean>) {
   const startedAt = Date.now();
   const monitorResult = await runDueSourceMonitors(sourceBatch);
-  const expired = (await canRunExpiry()) ? await expireDueJobs() : 0;
+  const housekeeping = await canRunExpiry();
+  const expired = housekeeping ? await expireDueJobs() : 0;
+  const applicationsPurged = housekeeping ? await purgeOldApplications() : 0;
   logger.info("worker.cycle_completed", {
     workerId,
     checked: monitorResult.checked,
@@ -41,6 +44,7 @@ async function runJobs(canRunExpiry: () => Promise<boolean>) {
     queuedForReview: monitorResult.publishing.PENDING_REVIEW,
     closedBySource: monitorResult.lifecycle.closed,
     expired,
+    applicationsPurged,
     durationMs: Date.now() - startedAt,
   });
 }

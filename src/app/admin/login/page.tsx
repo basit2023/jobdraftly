@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Administrator Login" };
 
 export default async function AdminLoginPage() {
   const session = await getServerSession(authOptions);
-  if (session?.user?.id) redirect("/admin/dashboard");
+  if (session?.user?.id && session.user.kind === "admin") redirect("/admin/dashboard");
 
   return (
     <main className="grid min-h-screen bg-[#07182d] lg:grid-cols-[1.1fr_0.9fr]">

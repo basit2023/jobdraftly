@@ -3,8 +3,9 @@
 import { LoaderCircle } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
-export function SubmitButton({ label = "Save changes" }: { label?: string }) {
-  const { pending } = useFormStatus();
+export function SubmitButton({ label = "Save changes", pending: pendingProp }: { label?: string; pending?: boolean }) {
+  const status = useFormStatus();
+  const pending = pendingProp ?? status.pending;
   return (
     <button
       className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-65"

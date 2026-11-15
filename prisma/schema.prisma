@@ -78,6 +78,23 @@ enum ApplicationMethod {
   EXTERNAL_URL
   EMAIL
   INSTRUCTIONS
+  /// Candidates apply with their CV on JobDraftly; the employer reviews them in /employer.
+  ON_SITE
+}
+
+enum EmployerRole {
+  OWNER
+  RECRUITER
+}
+
+enum ApplicationStatus {
+  NEW
+  REVIEWING
+  SHORTLISTED
+  INTERVIEW
+  OFFERED
+  HIRED
+  REJECTED
 }
 
 enum JobStatus {
@@ -227,22 +244,24 @@ model Admin {
 }
 
 model Company {
-  id          String       @id @default(cuid()) @db.VarChar(30)
-  name        String       @db.VarChar(191)
-  slug        String       @unique(map: "uq_companies_slug") @db.VarChar(191)
-  legalName   String?      @db.VarChar(191)
-  websiteUrl  String?      @db.Text
-  domain      String?      @unique(map: "uq_companies_domain") @db.VarChar(191)
-  logoUrl     String?      @db.Text
-  description String?      @db.LongText
-  industry    String?      @db.VarChar(120)
-  locationId  String?      @db.VarChar(30)
-  isVerified  Boolean      @default(false)
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now()) @db.DateTime(3)
-  updatedAt   DateTime     @updatedAt @db.DateTime(3)
-  location    JobLocation? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  jobs        Job[]
+  id            String           @id @default(cuid()) @db.VarChar(30)
+  name          String           @db.VarChar(191)
+  slug          String           @unique(map: "uq_companies_slug") @db.VarChar(191)
+  legalName     String?          @db.VarChar(191)
+  websiteUrl    String?          @db.Text
+  domain        String?          @unique(map: "uq_companies_domain") @db.VarChar(191)
+  logoUrl       String?          @db.Text
+  description   String?          @db.LongText
+  industry      String?          @db.VarChar(120)
+  locationId    String?          @db.VarChar(30)
+  isVerified    Boolean          @default(false)
+  isActive      Boolean          @default(true)
+  createdAt     DateTime         @default(now()) @db.DateTime(3)
+  updatedAt     DateTime         @updatedAt @db.DateTime(3)
+  location      JobLocation?     @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  jobs          Job[]
+  employerUsers EmployerUser[]
+  applications  JobApplication[]
 
   @@index([name], map: "idx_companies_name")
   @@index([locationId], map: "idx_companies_location")
@@ -437,6 +456,9 @@ model Job {
   isFeatured          Boolean               @default(false)
   /// Advert or banner image (e.g. a newspaper advertisement) stored in Cloudinary.
   imageUrl            String?               @db.Text
+  /// Set when a company posted the job from its own employer account.
+  postedByEmployerId  String?               @db.VarChar(30)
+  postedByEmployer    EmployerUser?         @relation("EmployerPostedJobs", fields: [postedByEmployerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   createdAt           DateTime              @default(now()) @db.DateTime(3)
   updatedAt           DateTime              @updatedAt @db.DateTime(3)
   company             Company               @relation(fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
@@ -450,6 +472,7 @@ model Job {
   tags                JobTagAssignment[]
   sourceDiscoveries   SourceDiscovery[]
   analyticsEvents     AnalyticsEvent[]
+  applications        JobApplication[]
 
   @@unique([sourceId, sourceExternalId], map: "uq_jobs_source_external_id")
   @@unique([sourceId, sourceUrlHash], map: "uq_jobs_source_url_hash")
@@ -462,6 +485,7 @@ model Job {
   @@index([expiresAt, status], map: "idx_jobs_expiry_status")
   @@index([jobImportId], map: "idx_jobs_import")
   @@index([verificationStatus, status], map: "idx_jobs_verification_status")
+  @@index([postedByEmployerId], map: "idx_jobs_posted_by_employer")
   @@index([verifiedById], map: "idx_jobs_verified_by")
   @@fulltext([title, description, skills], map: "ft_jobs_search")
   @@map("jobs")
@@ -629,4 +653,58 @@ model JobTagAssignment {
   @@id([jobId, tagId])
   @@index([tagId, jobId], map: "idx_job_tag_assignments_tag_job")
   @@map("job_tag_assignments")
+}
+
+/// A person who signs in to /employer on behalf of one company. Created by an
+/// administrator (owners) or by the company owner (recruiters).
+model EmployerUser {
+  id                  String       @id @default(cuid()) @db.VarChar(30)
+  companyId           String       @db.VarChar(30)
+  email               String       @unique(map: "uq_employer_users_email") @db.VarChar(191)
+  name                String       @db.VarChar(120)
+  /// Null until the person opens their one-time setup link and chooses a password.
+  passwordHash        String?      @db.VarChar(255)
+  role                EmployerRole @default(RECRUITER)
+  isActive            Boolean      @default(true)
+  /// SHA-256 of the one-time setup/reset token; the token itself is never stored.
+  setupTokenHash      String?      @unique(map: "uq_employer_users_setup_token") @db.Char(64)
+  setupTokenExpiresAt DateTime?    @db.DateTime(3)
+  lastLoginAt         DateTime?    @db.DateTime(3)
+  createdAt           DateTime     @default(now()) @db.DateTime(3)
+  updatedAt           DateTime     @updatedAt @db.DateTime(3)
+  company             Company      @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postedJobs          Job[]        @relation("EmployerPostedJobs")
+
+  @@index([companyId, isActive], map: "idx_employer_users_company_active")
+  @@map("employer_users")
+}
+
+/// A candidate's application to an ON_SITE job. The CV lives in private storage.
+model JobApplication {
+  id              String            @id @default(cuid()) @db.VarChar(30)
+  jobId           String            @db.VarChar(30)
+  companyId       String            @db.VarChar(30)
+  fullName        String            @db.VarChar(120)
+  email           String            @db.VarChar(191)
+  phone           String            @db.VarChar(30)
+  city            String?           @db.VarChar(120)
+  coverLetter     String?           @db.Text
+  cvStorageKey    String            @db.VarChar(255)
+  cvFileName      String            @db.VarChar(255)
+  cvMimeType      String            @db.VarChar(100)
+  cvSizeBytes     Int               @db.UnsignedInt
+  status          ApplicationStatus @default(NEW)
+  employerNotes   String?           @db.Text
+  viewedAt        DateTime?         @db.DateTime(3)
+  statusChangedAt DateTime?         @db.DateTime(3)
+  createdAt       DateTime          @default(now()) @db.DateTime(3)
+  updatedAt       DateTime          @updatedAt @db.DateTime(3)
+  job             Job               @relation(fields: [jobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([jobId, email], map: "uq_job_applications_job_email")
+  @@index([companyId, status, createdAt], map: "idx_job_applications_company_status_created")
+  @@index([jobId, status, createdAt], map: "idx_job_applications_job_status_created")
+  @@index([createdAt], map: "idx_job_applications_created")
+  @@map("job_applications")
 }

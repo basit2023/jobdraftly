@@ -71,9 +71,10 @@ function baseSalary(job: PublicJobDetail): JsonObject | undefined {
 
 export function buildJobPosting(job: PublicJobDetail, now = new Date()): JsonObject | null {
   if (!isJobPostingEligible(job, now)) return null;
+  const directApply = job.applicationMethod === "ON_SITE";
   const applicationUrl = publicHttpUrl(job.applicationUrl);
   const datePosted = job.originalPublishedAt ?? job.publishedAt;
-  if (!applicationUrl || !datePosted) return null;
+  if ((!applicationUrl && !directApply) || !datePosted) return null;
   const organization: JsonObject = { "@type": "Organization", name: job.company.name };
   const website = publicHttpUrl(job.company.websiteUrl);
   if (website) organization.sameAs = website;
@@ -87,6 +88,8 @@ export function buildJobPosting(job: PublicJobDetail, now = new Date()): JsonObj
     employmentType: employmentType(job.employmentType),
     hiringOrganization: organization,
     url: absoluteUrl(`/jobs/${job.slug}`),
+    // Candidates can apply on this page itself (Google shows "Easy apply").
+    ...(directApply ? { directApply: true } : {}),
   };
   const validThrough = job.applicationDeadline ?? job.expiresAt;
   if (validThrough) schema.validThrough = validThrough.toISOString();
@@ -135,7 +138,7 @@ export function isJobPostingEligible(job: PublicJobDetail, now = new Date()) {
     (!job.expiresAt || job.expiresAt > now) &&
     (!job.applicationDeadline || job.applicationDeadline >= pakistanDayStart) &&
     importedSourceIsEligible &&
-    publicHttpUrl(job.applicationUrl),
+    (job.applicationMethod === "ON_SITE" || publicHttpUrl(job.applicationUrl)),
   );
 }
 

@@ -64,6 +64,12 @@ export function SiteHeader() {
             About
           </Link>
           <Link
+            className="text-sm font-medium text-body transition-colors hover:text-ink"
+            href="/employer/login"
+          >
+            Employer sign in
+          </Link>
+          <Link
             className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand"
             href="/contact?topic=employer"
           >
@@ -90,7 +96,7 @@ export function SiteHeader() {
           id="mobile-navigation"
         >
           <ul className="mx-auto max-w-7xl divide-y divide-line">
-            {[...navigation, { href: "/about", label: "About" }, { href: "/contact", label: "Contact" }].map(
+            {[...navigation, { href: "/about", label: "About" }, { href: "/contact", label: "Contact" }, { href: "/employer/login", label: "Employer sign in" }].map(
               (item) => {
                 const active = isActive(pathname, item.href);
                 return (

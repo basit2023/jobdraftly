@@ -100,10 +100,32 @@ export type WorkplaceType = (typeof WorkplaceType)[keyof typeof WorkplaceType]
 export const ApplicationMethod = {
   EXTERNAL_URL: 'EXTERNAL_URL',
   EMAIL: 'EMAIL',
-  INSTRUCTIONS: 'INSTRUCTIONS'
+  INSTRUCTIONS: 'INSTRUCTIONS',
+  ON_SITE: 'ON_SITE'
 } as const
 
 export type ApplicationMethod = (typeof ApplicationMethod)[keyof typeof ApplicationMethod]
+
+
+export const EmployerRole = {
+  OWNER: 'OWNER',
+  RECRUITER: 'RECRUITER'
+} as const
+
+export type EmployerRole = (typeof EmployerRole)[keyof typeof EmployerRole]
+
+
+export const ApplicationStatus = {
+  NEW: 'NEW',
+  REVIEWING: 'REVIEWING',
+  SHORTLISTED: 'SHORTLISTED',
+  INTERVIEW: 'INTERVIEW',
+  OFFERED: 'OFFERED',
+  HIRED: 'HIRED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
 
 
 export const JobStatus = {

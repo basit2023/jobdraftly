@@ -16,7 +16,10 @@ import { config } from "dotenv";
 
 import { PrismaClient, type Prisma } from "../src/generated/prisma/client";
 import { createDatabaseAdapter } from "../src/lib/db/adapter";
+import { db as appDb } from "../src/lib/db";
+import { createEmployerUser } from "../src/lib/services/employer-accounts";
 import { createJobDeduplicationKey, createJobSlug, createSourceUrlHash } from "../src/lib/services/job-identity";
+import { deletePrivateFile } from "../src/lib/storage/private-store";
 
 config({ path: [".env.local", ".env"], quiet: true });
 if (process.env.NODE_ENV === "production") throw new Error("Sample data must never be added to production.");
@@ -46,11 +49,19 @@ type SampleJob = {
   requirements: string;
   skills: string;
   featured?: boolean;
+  /** Candidates apply on JobDraftly with their CV (shows the apply form). */
+  onSite?: boolean;
 };
+
+/** Sample company logins: one verified (jobs go live at once), one not (jobs wait for approval). */
+const SAMPLE_EMPLOYERS = [
+  { company: "Indus Byte Software (Sample)", name: "Sara Ahmed", email: "owner@indusbyte.sample.test", verified: true },
+  { company: "Karachi Textile Mills (Sample)", name: "Bilal Qureshi", email: "owner@karachitextile.sample.test", verified: false },
+] as const;
 
 const jobs: SampleJob[] = [
   {
-    key: "frontend", expect: "live", featured: true,
+    key: "frontend", expect: "live", featured: true, onSite: true,
     title: "Senior Frontend Developer (React)", company: "Indus Byte Software (Sample)", city: "Lahore",
     category: "Information Technology & Software", employmentType: "FULL_TIME", experienceLevel: "SENIOR", workplaceType: "HYBRID",
     salary: [350_000, 500_000], deadlineDays: 21,
@@ -59,7 +70,7 @@ const jobs: SampleJob[] = [
     skills: "React, TypeScript, Next.js, CSS, Testing",
   },
   {
-    key: "accountant", expect: "live",
+    key: "accountant", expect: "live", onSite: true,
     title: "Accounts Officer", company: "Karachi Textile Mills (Sample)", city: "Karachi",
     category: "Accounting & Finance", employmentType: "FULL_TIME", experienceLevel: "MID_LEVEL", workplaceType: "ONSITE",
     salary: [120_000, 160_000], deadlineDays: 10,
@@ -147,6 +158,14 @@ async function remove() {
     await db.sourceDiscovery.deleteMany({ where: { sourceId: source.id } });
     await db.job.deleteMany({ where: { sourceId: source.id } });
   }
+  // Company logins and applications (with their private CV files) go before the companies.
+  const sampleCompanies = { slug: { startsWith: "sample-" } };
+  for (const application of await db.jobApplication.findMany({ where: { company: sampleCompanies }, select: { cvStorageKey: true } })) {
+    await deletePrivateFile(application.cvStorageKey).catch(() => undefined);
+  }
+  await db.jobApplication.deleteMany({ where: { company: sampleCompanies } });
+  await db.employerUser.deleteMany({ where: { company: sampleCompanies } });
+  await db.job.deleteMany({ where: { company: sampleCompanies, postedByEmployerId: { not: null } } });
   await db.company.deleteMany({ where: { slug: { startsWith: "sample-" }, jobs: { none: {} } } });
   if (source) await db.jobSource.delete({ where: { id: source.id } });
   return jobIds.length;
@@ -180,7 +199,8 @@ async function seed() {
       where: { slug: companySlug },
       update: {},
       create: {
-        name: sample.company, slug: companySlug, locationId: city.id, isActive: true, isVerified: false,
+        name: sample.company, slug: companySlug, locationId: city.id, isActive: true,
+        isVerified: SAMPLE_EMPLOYERS.some((employer) => employer.company === sample.company && employer.verified),
         description: "Fictional company used for local testing.",
       },
     });
@@ -204,8 +224,8 @@ async function seed() {
         salaryMax: sample.salary?.[1] ?? null,
         salaryVisibility: sample.salary ? (sample.salary[0] === sample.salary[1] ? "EXACT" : "RANGE") : "HIDDEN",
         salaryPeriod: sample.salary ? "MONTH" : null,
-        applicationMethod: "EXTERNAL_URL",
-        applicationUrl: sourceUrl,
+        applicationMethod: sample.onSite ? "ON_SITE" : "EXTERNAL_URL",
+        applicationUrl: sample.onSite ? null : sourceUrl,
         sourceId: source.id,
         sourceUrl,
         sourceExternalId: sample.key,
@@ -233,8 +253,18 @@ async function seed() {
         },
       });
     }
-    console.log(`${sample.expect.padEnd(8)} ${sample.title} — ${sample.city}  →  /jobs/${job.slug}`);
+    console.log(`${sample.expect.padEnd(8)} ${sample.title} — ${sample.city}  →  /jobs/${job.slug}${sample.onSite ? "  (apply on JobDraftly)" : ""}`);
   }
+
+  console.log("");
+  console.log("Sample company logins — open a link to choose a password, then sign in at /employer/login:");
+  for (const employer of SAMPLE_EMPLOYERS) {
+    const company = await db.company.findFirstOrThrow({ where: { name: employer.company }, select: { id: true } });
+    const { link } = await createEmployerUser({ companyId: company.id, name: employer.name, email: employer.email, role: "OWNER" });
+    console.log(`  ${employer.email} (${employer.verified ? "verified" : "not verified"})`);
+    console.log(`    ${link.url}`);
+  }
+  await appDb.$disconnect();
 }
 
 const removing = process.argv.includes("--remove");

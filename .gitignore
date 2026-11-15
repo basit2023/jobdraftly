@@ -45,3 +45,5 @@ next-env.d.ts
 /public/uploads/company-logos/*
 !/public/uploads/company-logos/.gitkeep
 
+# Private files (candidate CVs) — never commit
+/storage/

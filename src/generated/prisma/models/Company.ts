@@ -256,6 +256,8 @@ export type CompanyWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   location?: Prisma.XOR<Prisma.JobLocationNullableScalarRelationFilter, Prisma.JobLocationWhereInput> | null
   jobs?: Prisma.JobListRelationFilter
+  employerUsers?: Prisma.EmployerUserListRelationFilter
+  applications?: Prisma.JobApplicationListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -275,6 +277,8 @@ export type CompanyOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   location?: Prisma.JobLocationOrderByWithRelationInput
   jobs?: Prisma.JobOrderByRelationAggregateInput
+  employerUsers?: Prisma.EmployerUserOrderByRelationAggregateInput
+  applications?: Prisma.JobApplicationOrderByRelationAggregateInput
   _relevance?: Prisma.CompanyOrderByRelevanceInput
 }
 
@@ -298,6 +302,8 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   location?: Prisma.XOR<Prisma.JobLocationNullableScalarRelationFilter, Prisma.JobLocationWhereInput> | null
   jobs?: Prisma.JobListRelationFilter
+  employerUsers?: Prisma.EmployerUserListRelationFilter
+  applications?: Prisma.JobApplicationListRelationFilter
 }, "id" | "slug" | "domain">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -356,6 +362,8 @@ export type CompanyCreateInput = {
   updatedAt?: Date | string
   location?: Prisma.JobLocationCreateNestedOneWithoutCompaniesInput
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -374,6 +382,8 @@ export type CompanyUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserUncheckedCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -392,6 +402,8 @@ export type CompanyUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.JobLocationUpdateOneWithoutCompaniesNestedInput
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -410,6 +422,8 @@ export type CompanyUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUncheckedUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -594,6 +608,34 @@ export type CompanyUpdateOneRequiredWithoutJobsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutJobsInput, Prisma.CompanyUpdateWithoutJobsInput>, Prisma.CompanyUncheckedUpdateWithoutJobsInput>
 }
 
+export type CompanyCreateNestedOneWithoutEmployerUsersInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutEmployerUsersInput, Prisma.CompanyUncheckedCreateWithoutEmployerUsersInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutEmployerUsersInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutEmployerUsersNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutEmployerUsersInput, Prisma.CompanyUncheckedCreateWithoutEmployerUsersInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutEmployerUsersInput
+  upsert?: Prisma.CompanyUpsertWithoutEmployerUsersInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutEmployerUsersInput, Prisma.CompanyUpdateWithoutEmployerUsersInput>, Prisma.CompanyUncheckedUpdateWithoutEmployerUsersInput>
+}
+
+export type CompanyCreateNestedOneWithoutApplicationsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutApplicationsInput, Prisma.CompanyUncheckedCreateWithoutApplicationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutApplicationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutApplicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutApplicationsInput, Prisma.CompanyUncheckedCreateWithoutApplicationsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutApplicationsInput
+  upsert?: Prisma.CompanyUpsertWithoutApplicationsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutApplicationsInput, Prisma.CompanyUpdateWithoutApplicationsInput>, Prisma.CompanyUncheckedUpdateWithoutApplicationsInput>
+}
+
 export type CompanyCreateWithoutLocationInput = {
   id?: string
   name: string
@@ -609,6 +651,8 @@ export type CompanyCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutLocationInput = {
@@ -626,6 +670,8 @@ export type CompanyUncheckedCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserUncheckedCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutLocationInput = {
@@ -689,6 +735,8 @@ export type CompanyCreateWithoutJobsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   location?: Prisma.JobLocationCreateNestedOneWithoutCompaniesInput
+  employerUsers?: Prisma.EmployerUserCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutJobsInput = {
@@ -706,6 +754,8 @@ export type CompanyUncheckedCreateWithoutJobsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  employerUsers?: Prisma.EmployerUserUncheckedCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutJobsInput = {
@@ -739,6 +789,8 @@ export type CompanyUpdateWithoutJobsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.JobLocationUpdateOneWithoutCompaniesNestedInput
+  employerUsers?: Prisma.EmployerUserUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutJobsInput = {
@@ -756,6 +808,192 @@ export type CompanyUncheckedUpdateWithoutJobsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employerUsers?: Prisma.EmployerUserUncheckedUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutEmployerUsersInput = {
+  id?: string
+  name: string
+  slug: string
+  legalName?: string | null
+  websiteUrl?: string | null
+  domain?: string | null
+  logoUrl?: string | null
+  description?: string | null
+  industry?: string | null
+  isVerified?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  location?: Prisma.JobLocationCreateNestedOneWithoutCompaniesInput
+  jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutEmployerUsersInput = {
+  id?: string
+  name: string
+  slug: string
+  legalName?: string | null
+  websiteUrl?: string | null
+  domain?: string | null
+  logoUrl?: string | null
+  description?: string | null
+  industry?: string | null
+  locationId?: string | null
+  isVerified?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  applications?: Prisma.JobApplicationUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutEmployerUsersInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutEmployerUsersInput, Prisma.CompanyUncheckedCreateWithoutEmployerUsersInput>
+}
+
+export type CompanyUpsertWithoutEmployerUsersInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutEmployerUsersInput, Prisma.CompanyUncheckedUpdateWithoutEmployerUsersInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutEmployerUsersInput, Prisma.CompanyUncheckedCreateWithoutEmployerUsersInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutEmployerUsersInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutEmployerUsersInput, Prisma.CompanyUncheckedUpdateWithoutEmployerUsersInput>
+}
+
+export type CompanyUpdateWithoutEmployerUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.JobLocationUpdateOneWithoutCompaniesNestedInput
+  jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutEmployerUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutApplicationsInput = {
+  id?: string
+  name: string
+  slug: string
+  legalName?: string | null
+  websiteUrl?: string | null
+  domain?: string | null
+  logoUrl?: string | null
+  description?: string | null
+  industry?: string | null
+  isVerified?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  location?: Prisma.JobLocationCreateNestedOneWithoutCompaniesInput
+  jobs?: Prisma.JobCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutApplicationsInput = {
+  id?: string
+  name: string
+  slug: string
+  legalName?: string | null
+  websiteUrl?: string | null
+  domain?: string | null
+  logoUrl?: string | null
+  description?: string | null
+  industry?: string | null
+  locationId?: string | null
+  isVerified?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  jobs?: Prisma.JobUncheckedCreateNestedManyWithoutCompanyInput
+  employerUsers?: Prisma.EmployerUserUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutApplicationsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutApplicationsInput, Prisma.CompanyUncheckedCreateWithoutApplicationsInput>
+}
+
+export type CompanyUpsertWithoutApplicationsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutApplicationsInput, Prisma.CompanyUncheckedUpdateWithoutApplicationsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutApplicationsInput, Prisma.CompanyUncheckedCreateWithoutApplicationsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutApplicationsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutApplicationsInput, Prisma.CompanyUncheckedUpdateWithoutApplicationsInput>
+}
+
+export type CompanyUpdateWithoutApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.JobLocationUpdateOneWithoutCompaniesNestedInput
+  jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyLocationInput = {
@@ -789,6 +1027,8 @@ export type CompanyUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   jobs?: Prisma.JobUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutLocationInput = {
@@ -806,6 +1046,8 @@ export type CompanyUncheckedUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   jobs?: Prisma.JobUncheckedUpdateManyWithoutCompanyNestedInput
+  employerUsers?: Prisma.EmployerUserUncheckedUpdateManyWithoutCompanyNestedInput
+  applications?: Prisma.JobApplicationUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateManyWithoutLocationInput = {
@@ -831,10 +1073,14 @@ export type CompanyUncheckedUpdateManyWithoutLocationInput = {
 
 export type CompanyCountOutputType = {
   jobs: number
+  employerUsers: number
+  applications: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   jobs?: boolean | CompanyCountOutputTypeCountJobsArgs
+  employerUsers?: boolean | CompanyCountOutputTypeCountEmployerUsersArgs
+  applications?: boolean | CompanyCountOutputTypeCountApplicationsArgs
 }
 
 /**
@@ -852,6 +1098,20 @@ export type CompanyCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type CompanyCountOutputTypeCountJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.JobWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountEmployerUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployerUserWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.JobApplicationWhereInput
 }
 
 
@@ -872,6 +1132,8 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   location?: boolean | Prisma.Company$locationArgs<ExtArgs>
   jobs?: boolean | Prisma.Company$jobsArgs<ExtArgs>
+  employerUsers?: boolean | Prisma.Company$employerUsersArgs<ExtArgs>
+  applications?: boolean | Prisma.Company$applicationsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -898,6 +1160,8 @@ export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.Company$locationArgs<ExtArgs>
   jobs?: boolean | Prisma.Company$jobsArgs<ExtArgs>
+  employerUsers?: boolean | Prisma.Company$employerUsersArgs<ExtArgs>
+  applications?: boolean | Prisma.Company$applicationsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -906,6 +1170,8 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     location: Prisma.$JobLocationPayload<ExtArgs> | null
     jobs: Prisma.$JobPayload<ExtArgs>[]
+    employerUsers: Prisma.$EmployerUserPayload<ExtArgs>[]
+    applications: Prisma.$JobApplicationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1264,6 +1530,8 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   location<T extends Prisma.Company$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$locationArgs<ExtArgs>>): Prisma.Prisma__JobLocationClient<runtime.Types.Result.GetResult<Prisma.$JobLocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   jobs<T extends Prisma.Company$jobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employerUsers<T extends Prisma.Company$employerUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$employerUsersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployerUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  applications<T extends Prisma.Company$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1695,6 +1963,54 @@ export type Company$jobsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.JobScalarFieldEnum | Prisma.JobScalarFieldEnum[]
+}
+
+/**
+ * Company.employerUsers
+ */
+export type Company$employerUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployerUser
+   */
+  select?: Prisma.EmployerUserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployerUser
+   */
+  omit?: Prisma.EmployerUserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployerUserInclude<ExtArgs> | null
+  where?: Prisma.EmployerUserWhereInput
+  orderBy?: Prisma.EmployerUserOrderByWithRelationInput | Prisma.EmployerUserOrderByWithRelationInput[]
+  cursor?: Prisma.EmployerUserWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployerUserScalarFieldEnum | Prisma.EmployerUserScalarFieldEnum[]
+}
+
+/**
+ * Company.applications
+ */
+export type Company$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the JobApplication
+   */
+  select?: Prisma.JobApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the JobApplication
+   */
+  omit?: Prisma.JobApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.JobApplicationInclude<ExtArgs> | null
+  where?: Prisma.JobApplicationWhereInput
+  orderBy?: Prisma.JobApplicationOrderByWithRelationInput | Prisma.JobApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.JobApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.JobApplicationScalarFieldEnum | Prisma.JobApplicationScalarFieldEnum[]
 }
 
 /**

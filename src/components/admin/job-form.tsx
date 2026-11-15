@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useFormAction } from "@/components/forms/use-form-action";
 
 import type { AdminFormState } from "@/lib/validations/admin-forms";
 import { initialAdminFormState } from "@/lib/validations/admin-forms";
@@ -55,13 +55,13 @@ export function JobForm({
   sources: Option[];
   imported?: boolean;
 }) {
-  const [state, formAction] = useActionState(action, initialAdminFormState);
+  const { state, onSubmit, pending, messageRef } = useFormAction(action, initialAdminFormState);
   const input = "min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 outline-none focus:border-blue-400";
   const textarea = `${input} min-h-36 py-3 leading-6`;
 
   return (
-    <form action={formAction} className="space-y-6">
-      <FormMessage state={state} />
+    <form className="space-y-6" onSubmit={onSubmit}>
+      <FormMessage messageRef={messageRef} state={state} />
       {imported ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
           This vacancy was imported. Confirm its source and application destination before changing the status to Published.
@@ -108,7 +108,7 @@ export function JobForm({
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-extrabold text-[#0b1f3a]">Application and source</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <Field label="Application method"><select className={input} defaultValue={defaults.applicationMethod ?? "EXTERNAL_URL"} name="applicationMethod"><option value="EXTERNAL_URL">External URL</option><option value="EMAIL">Email/instructions</option><option value="INSTRUCTIONS">Instructions</option></select></Field>
+          <Field label="Application method"><select className={input} defaultValue={defaults.applicationMethod ?? "EXTERNAL_URL"} name="applicationMethod"><option value="EXTERNAL_URL">External URL</option><option value="ON_SITE">Apply on JobDraftly (CV)</option><option value="EMAIL">Email/instructions</option><option value="INSTRUCTIONS">Instructions</option></select></Field>
           <Field label="Verified application URL"><input className={input} defaultValue={defaults.applicationUrl ?? ""} name="applicationUrl" placeholder="https://employer.example/apply" type="url" /></Field>
           <Field label="Source"><select className={input} defaultValue={defaults.sourceId ?? ""} name="sourceId"><option value="">No source selected</option>{sources.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></Field>
           <Field label="Original source URL"><input className={input} defaultValue={defaults.sourceUrl ?? ""} name="sourceUrl" placeholder="https://source.example/vacancy" type="url" /></Field>
@@ -123,7 +123,7 @@ export function JobForm({
         </div>
       </section>
 
-      <div className="flex justify-end"><SubmitButton label="Save job" /></div>
+      <div className="flex justify-end"><SubmitButton label="Save job" pending={pending} /></div>
     </form>
   );
 }

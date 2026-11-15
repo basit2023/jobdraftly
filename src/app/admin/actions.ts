@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { createAuditLog } from "@/lib/services/admin-audit";
+import { createEmployerUser, emailSetupLink, employerMemberSchema } from "@/lib/services/employer-accounts";
 import { createEntitySlug } from "@/lib/services/entity-slug";
 import { createJobDeduplicationKey, createJobSlug, createSourceUrlHash } from "@/lib/services/job-identity";
 import { revalidatePublicJobDiscovery } from "@/lib/seo/revalidate";
@@ -224,15 +225,46 @@ export async function createCompanyAction(_state: AdminFormState, formData: Form
   const admin = await requireAdmin();
   const parsed = companyAdminSchema.safeParse(values(formData));
   if (!parsed.success) return invalid(parsed.error);
+
+  // Optional owner login. Checked before anything is saved so a bad email never leaves a half-created company.
+  const ownerName = String(formData.get("ownerName") ?? "").trim();
+  const ownerEmail = String(formData.get("ownerEmail") ?? "").trim();
+  let owner: { name: string; email: string } | null = null;
+  if (ownerName || ownerEmail) {
+    const ownerParsed = employerMemberSchema.safeParse({ name: ownerName, email: ownerEmail });
+    if (!ownerParsed.success) {
+      const errors = ownerParsed.error.flatten().fieldErrors;
+      return {
+        success: false,
+        message: "Check the company login details.",
+        errors: { ...(errors.name ? { ownerName: errors.name } : {}), ...(errors.email ? { ownerEmail: errors.email } : {}) },
+      };
+    }
+    if (await db.employerUser.findUnique({ where: { email: ownerParsed.data.email }, select: { id: true } })) {
+      return { success: false, message: "Check the company login details.", errors: { ownerEmail: ["This email already has a company login. Use a different address."] } };
+    }
+    owner = ownerParsed.data;
+  }
+
+  let companyId = "";
+  let loginOutcome = "";
   try {
     const slug = await uniqueCompanySlug(parsed.data.name);
     const company = await db.company.create({ data: { ...parsed.data, slug } });
+    companyId = company.id;
     await createAuditLog({ adminId: admin.id, action: "CREATE", entityType: "Company", entityId: company.id, summary: `Created company: ${company.name}` });
+    if (owner) {
+      const { user, link } = await createEmployerUser({ companyId: company.id, name: owner.name, email: owner.email, role: "OWNER" });
+      const result = await emailSetupLink(user.id, link, "welcome");
+      loginOutcome = result.delivered === "smtp" ? "emailed" : result.delivered === "dev-outbox" ? "saved" : "failed";
+      await createAuditLog({ adminId: admin.id, action: "CREATE", entityType: "EmployerUser", entityId: user.id, summary: `Created owner login ${user.email} for ${company.name} (verification email: ${loginOutcome})` });
+    }
   } catch (error) {
     return failure(error);
   }
   revalidatePath("/admin/companies");
-  redirect("/admin/companies?created=1");
+  // The company page shows whether the email went out; links are never put in the URL.
+  redirect(loginOutcome ? `/admin/companies/${companyId}/edit?login=${loginOutcome}` : "/admin/companies?created=1");
 }
 
 export async function updateCompanyAction(id: string, _state: AdminFormState, formData: FormData): Promise<AdminFormState> {

@@ -10,11 +10,13 @@
  */
 import { db } from "@/lib/db";
 import { runDueSourceMonitors } from "@/lib/monitoring/runner";
+import { purgeOldApplications } from "@/lib/services/applications";
 import { expireDueJobs } from "@/lib/services/job-expiration";
 
 async function main() {
   const monitor = await runDueSourceMonitors(Number(process.env.MONITOR_SOURCE_BATCH_SIZE || 10));
   const expired = await expireDueJobs();
+  const applicationsPurged = await purgeOldApplications();
   console.log(JSON.stringify({
     sourcesChecked: monitor.checked,
     scans: monitor.results,
@@ -27,6 +29,7 @@ async function main() {
     closedBecauseSourceRemoved: monitor.lifecycle.closed,
     deadlinesExtended: monitor.lifecycle.extended,
     expired,
+    applicationsPurged,
   }, null, 2));
 }
 

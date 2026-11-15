@@ -11,7 +11,8 @@ import { authOptions } from "./options";
 export async function getAuthorizedAdmin() {
   const session = await getServerSession(authOptions);
   const id = session?.user?.id;
-  if (!id) return null;
+  // A company (employer) login must never pass an administrator check.
+  if (!id || session.user.kind !== "admin") return null;
 
   return db.admin.findFirst({
     where: { id, isActive: true },

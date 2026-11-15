@@ -7,5 +7,5 @@ import { db } from "@/lib/db";
 
 export default async function NewCompanyPage() {
   const cities = await db.jobLocation.findMany({ where: { type: "CITY", isActive: true }, orderBy: { name: "asc" }, select: { id: true, name: true } });
-  return <><AdminPageHeader description="Add an employer profile. Verification remains an explicit administrator decision." icon={Building2} title="Add company" /><CompanyForm action={createCompanyAction} cities={cities} /></>;
+  return <><AdminPageHeader description="Add an employer profile and, optionally, its owner's login. Tick Verified only for companies you have checked: their jobs go live without review." icon={Building2} title="Add company" /><CompanyForm action={createCompanyAction} cities={cities} withLogin /></>;
 }

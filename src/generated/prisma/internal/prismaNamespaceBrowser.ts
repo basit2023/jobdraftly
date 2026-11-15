@@ -68,7 +68,9 @@ export const ModelName = {
   AdminNotification: 'AdminNotification',
   JobSlugRedirect: 'JobSlugRedirect',
   JobTag: 'JobTag',
-  JobTagAssignment: 'JobTagAssignment'
+  JobTagAssignment: 'JobTagAssignment',
+  EmployerUser: 'EmployerUser',
+  JobApplication: 'JobApplication'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -281,6 +283,7 @@ export const JobScalarFieldEnum = {
   status: 'status',
   isFeatured: 'isFeatured',
   imageUrl: 'imageUrl',
+  postedByEmployerId: 'postedByEmployerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -425,6 +428,48 @@ export const JobTagAssignmentScalarFieldEnum = {
 } as const
 
 export type JobTagAssignmentScalarFieldEnum = (typeof JobTagAssignmentScalarFieldEnum)[keyof typeof JobTagAssignmentScalarFieldEnum]
+
+
+export const EmployerUserScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  email: 'email',
+  name: 'name',
+  passwordHash: 'passwordHash',
+  role: 'role',
+  isActive: 'isActive',
+  setupTokenHash: 'setupTokenHash',
+  setupTokenExpiresAt: 'setupTokenExpiresAt',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployerUserScalarFieldEnum = (typeof EmployerUserScalarFieldEnum)[keyof typeof EmployerUserScalarFieldEnum]
+
+
+export const JobApplicationScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  companyId: 'companyId',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  city: 'city',
+  coverLetter: 'coverLetter',
+  cvStorageKey: 'cvStorageKey',
+  cvFileName: 'cvFileName',
+  cvMimeType: 'cvMimeType',
+  cvSizeBytes: 'cvSizeBytes',
+  status: 'status',
+  employerNotes: 'employerNotes',
+  viewedAt: 'viewedAt',
+  statusChangedAt: 'statusChangedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JobApplicationScalarFieldEnum = (typeof JobApplicationScalarFieldEnum)[keyof typeof JobApplicationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -592,7 +637,8 @@ export const JobOrderByRelevanceFieldEnum = {
   deduplicationKey: 'deduplicationKey',
   jobImportId: 'jobImportId',
   verifiedById: 'verifiedById',
-  imageUrl: 'imageUrl'
+  imageUrl: 'imageUrl',
+  postedByEmployerId: 'postedByEmployerId'
 } as const
 
 export type JobOrderByRelevanceFieldEnum = (typeof JobOrderByRelevanceFieldEnum)[keyof typeof JobOrderByRelevanceFieldEnum]
@@ -692,4 +738,34 @@ export const JobTagAssignmentOrderByRelevanceFieldEnum = {
 } as const
 
 export type JobTagAssignmentOrderByRelevanceFieldEnum = (typeof JobTagAssignmentOrderByRelevanceFieldEnum)[keyof typeof JobTagAssignmentOrderByRelevanceFieldEnum]
+
+
+export const EmployerUserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  email: 'email',
+  name: 'name',
+  passwordHash: 'passwordHash',
+  setupTokenHash: 'setupTokenHash'
+} as const
+
+export type EmployerUserOrderByRelevanceFieldEnum = (typeof EmployerUserOrderByRelevanceFieldEnum)[keyof typeof EmployerUserOrderByRelevanceFieldEnum]
+
+
+export const JobApplicationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  companyId: 'companyId',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  city: 'city',
+  coverLetter: 'coverLetter',
+  cvStorageKey: 'cvStorageKey',
+  cvFileName: 'cvFileName',
+  cvMimeType: 'cvMimeType',
+  employerNotes: 'employerNotes'
+} as const
+
+export type JobApplicationOrderByRelevanceFieldEnum = (typeof JobApplicationOrderByRelevanceFieldEnum)[keyof typeof JobApplicationOrderByRelevanceFieldEnum]
 
