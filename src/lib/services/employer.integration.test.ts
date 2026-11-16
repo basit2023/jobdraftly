@@ -36,6 +36,8 @@ describe.runIf(runDatabaseTests)("company accounts, jobs and applications", asyn
     employmentType: "FULL_TIME" as const,
     experienceLevel: "MID_LEVEL" as const,
     workplaceType: "ONSITE" as const,
+    workplaceStreetAddress: null,
+    workplacePostalCode: null,
     education: null,
     description: "A temporary vacancy created by the employer portal integration test. It is deleted when the test finishes.",
     responsibilities: null,

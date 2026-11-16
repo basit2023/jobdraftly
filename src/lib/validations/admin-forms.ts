@@ -72,6 +72,8 @@ export const jobAdminSchema = z
       z.enum(["HOUR", "DAY", "WEEK", "MONTH", "YEAR"]).nullable(),
     ),
     workplaceType: z.enum(["NOT_SPECIFIED", "ONSITE", "HYBRID", "REMOTE"]),
+    workplaceStreetAddress: optionalText(255),
+    workplacePostalCode: optionalText(20),
     applicationMethod: z.enum(["EXTERNAL_URL", "EMAIL", "INSTRUCTIONS", "ON_SITE"]),
     applicationUrl: optionalUrl,
     sourceId: optionalText(30),
@@ -87,6 +89,12 @@ export const jobAdminSchema = z
     }
     if (data.salaryMin !== null && data.salaryMax !== null && data.salaryMin > data.salaryMax) {
       context.addIssue({ code: "custom", path: ["salaryMax"], message: "Maximum salary must be greater than or equal to minimum salary" });
+    }
+    if (["RANGE", "EXACT"].includes(data.salaryVisibility) && data.salaryMin === null && data.salaryMax === null) {
+      context.addIssue({ code: "custom", path: ["salaryMin"], message: "Enter the employer-provided salary amount" });
+    }
+    if (["RANGE", "EXACT"].includes(data.salaryVisibility) && !data.salaryPeriod) {
+      context.addIssue({ code: "custom", path: ["salaryPeriod"], message: "Select the salary period stated by the employer" });
     }
     if (data.applicationDeadline && data.expiresAt && data.expiresAt < data.applicationDeadline) {
       context.addIssue({ code: "custom", path: ["expiresAt"], message: "Expiration cannot be before the application deadline" });

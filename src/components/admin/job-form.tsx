@@ -28,6 +28,8 @@ export type JobFormDefaults = {
   salaryVisibility?: string;
   salaryPeriod?: string | null;
   workplaceType?: string;
+  workplaceStreetAddress?: string | null;
+  workplacePostalCode?: string | null;
   applicationMethod?: string;
   applicationUrl?: string | null;
   sourceId?: string | null;
@@ -78,6 +80,8 @@ export function JobForm({
           <Field label="Employment type"><select className={input} defaultValue={defaults.employmentType ?? "FULL_TIME"} name="employmentType">{[["FULL_TIME","Full-time"],["PART_TIME","Part-time"],["CONTRACT","Contract"],["TEMPORARY","Temporary"],["INTERNSHIP","Internship"],["FREELANCE","Freelance"],["OTHER","Other"]].map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></Field>
           <Field label="Experience level"><select className={input} defaultValue={defaults.experienceLevel ?? "NOT_SPECIFIED"} name="experienceLevel">{[["NOT_SPECIFIED","Not specified"],["ENTRY_LEVEL","Entry level"],["JUNIOR","Junior"],["MID_LEVEL","Mid level"],["SENIOR","Senior"],["LEAD","Lead"],["MANAGER","Manager"],["DIRECTOR","Director"],["EXECUTIVE","Executive"]].map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></Field>
           <Field label="Workplace type"><select className={input} defaultValue={defaults.workplaceType ?? "ONSITE"} name="workplaceType"><option value="NOT_SPECIFIED">Not specified</option><option value="ONSITE">On-site</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option></select></Field>
+          <Field label="Workplace street address" hint="Only when stated by the employer."><input className={input} defaultValue={defaults.workplaceStreetAddress ?? ""} maxLength={255} name="workplaceStreetAddress" /></Field>
+          <Field label="Workplace postal code" hint="Only when stated by the employer."><input className={input} defaultValue={defaults.workplacePostalCode ?? ""} maxLength={20} name="workplacePostalCode" /></Field>
           <Field label="Education"><input className={input} defaultValue={defaults.education ?? ""} maxLength={191} name="education" /></Field>
         </div>
       </section>

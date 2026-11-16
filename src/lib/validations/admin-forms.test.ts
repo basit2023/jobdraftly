@@ -21,6 +21,7 @@ function validJob(overrides: Record<string, unknown> = {}) {
     salaryMax: "200000",
     salaryCurrency: "PKR",
     salaryVisibility: "RANGE",
+    salaryPeriod: "MONTH",
     workplaceType: "HYBRID",
     applicationMethod: "EXTERNAL_URL",
     applicationUrl: "https://example.com/careers/123",

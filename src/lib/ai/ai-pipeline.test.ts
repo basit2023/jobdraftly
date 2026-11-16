@@ -23,6 +23,8 @@ const goodJob: AiJob = {
   employmentType: "FULL_TIME",
   experienceLevel: "MID_LEVEL",
   workplaceType: "ONSITE",
+  workplaceStreetAddress: null,
+  workplacePostalCode: null,
   education: "Master's degree",
   location: "Islamabad",
   category: "Government & Public Sector",

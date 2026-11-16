@@ -21,6 +21,8 @@ export const aiJobSchema = z.object({
   employmentType: z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "TEMPORARY", "INTERNSHIP", "FREELANCE", "OTHER"]),
   experienceLevel: z.enum(["NOT_SPECIFIED", "ENTRY_LEVEL", "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "MANAGER", "DIRECTOR", "EXECUTIVE"]),
   workplaceType: z.enum(["NOT_SPECIFIED", "ONSITE", "HYBRID", "REMOTE"]),
+  workplaceStreetAddress: z.string().nullable().describe("Physical workplace street address, only if explicitly stated in the advert."),
+  workplacePostalCode: z.string().nullable().describe("Physical workplace postal code, only if explicitly stated in the advert."),
   education: z.string().nullable(),
   location: z.string().nullable().describe("Must be copied exactly from the allowed locations list, or null."),
   category: z.string().nullable().describe("Must be copied exactly from the allowed categories list, or null."),
@@ -57,7 +59,8 @@ const SYSTEM_PROMPT = `You extract job vacancy details for JobDraftly, a job boa
 Rules:
 - Use only information present in the supplied advert. Never invent salaries, deadlines, links, employers or requirements; use null when something is not stated.
 - description, responsibilities and requirements must be the employer's ORIGINAL wording, copied exactly from the advert (same words, same language, same order). Never rewrite, shorten into a summary, translate, or add words of your own. You may only drop text that is not part of the job advert (site menus, cookie notices, unrelated links) and tidy line breaks.
-- The structured fields (title, location, category, dates, salary, employment type and so on) are the only place where you interpret the advert.
+- The structured fields (title, location, category, dates, salary, address, employment type and so on) are the only place where you interpret the advert.
+- Never infer a street address or postal code from the employer name or city; use null unless it appears in the advert.
 - "location" and "category" must be copied exactly from the allowed lists. If the advert covers several cities in one province, use the province. If nothing fits, use null.
 - Image URLs must be copied exactly from the candidate image list; otherwise null.
 - Dates are YYYY-MM-DD. Interpret Pakistani dates (DD/MM/YYYY) correctly.

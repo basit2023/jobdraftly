@@ -418,61 +418,63 @@ model JobImportRow {
 }
 
 model Job {
-  id                  String                @id @default(cuid()) @db.VarChar(30)
-  title               String                @db.VarChar(191)
-  slug                String                @unique(map: "uq_jobs_slug") @db.VarChar(191)
-  companyId           String                @db.VarChar(30)
-  categoryId          String                @db.VarChar(30)
-  locationId          String                @db.VarChar(30)
-  description         String                @db.LongText
-  responsibilities    String?               @db.LongText
-  requirements        String?               @db.LongText
-  skills              String?               @db.Text
-  employmentType      EmploymentType
-  experienceLevel     ExperienceLevel       @default(NOT_SPECIFIED)
-  education           String?               @db.VarChar(191)
-  salaryMin           Decimal?              @db.Decimal(12, 2)
-  salaryMax           Decimal?              @db.Decimal(12, 2)
-  salaryCurrency      String                @default("PKR") @db.Char(3)
-  salaryVisibility    SalaryVisibility      @default(HIDDEN)
-  salaryPeriod        SalaryPeriod?
-  workplaceType       WorkplaceType
-  applicationMethod   ApplicationMethod
-  applicationUrl      String?               @db.Text
-  sourceId            String?               @db.VarChar(30)
-  sourceUrl           String?               @db.Text
-  sourceExternalId    String?               @db.VarChar(191)
-  sourceUrlHash       String?               @db.Char(64)
-  deduplicationKey    String                @unique(map: "uq_jobs_deduplication_key") @db.Char(64)
-  jobImportId         String?               @db.VarChar(30)
-  originalPublishedAt DateTime?             @db.DateTime(3)
-  verificationStatus  JobVerificationStatus @default(UNVERIFIED)
-  verifiedAt          DateTime?             @db.DateTime(3)
-  verifiedById        String?               @db.VarChar(30)
-  publishedAt         DateTime?             @db.DateTime(3)
-  applicationDeadline DateTime?             @db.DateTime(3)
-  expiresAt           DateTime?             @db.DateTime(3)
-  status              JobStatus             @default(DRAFT)
-  isFeatured          Boolean               @default(false)
+  id                     String                @id @default(cuid()) @db.VarChar(30)
+  title                  String                @db.VarChar(191)
+  slug                   String                @unique(map: "uq_jobs_slug") @db.VarChar(191)
+  companyId              String                @db.VarChar(30)
+  categoryId             String                @db.VarChar(30)
+  locationId             String                @db.VarChar(30)
+  description            String                @db.LongText
+  responsibilities       String?               @db.LongText
+  requirements           String?               @db.LongText
+  skills                 String?               @db.Text
+  employmentType         EmploymentType
+  experienceLevel        ExperienceLevel       @default(NOT_SPECIFIED)
+  education              String?               @db.VarChar(191)
+  salaryMin              Decimal?              @db.Decimal(12, 2)
+  salaryMax              Decimal?              @db.Decimal(12, 2)
+  salaryCurrency         String                @default("PKR") @db.Char(3)
+  salaryVisibility       SalaryVisibility      @default(HIDDEN)
+  salaryPeriod           SalaryPeriod?
+  workplaceType          WorkplaceType
+  workplaceStreetAddress String?               @db.VarChar(255)
+  workplacePostalCode    String?               @db.VarChar(20)
+  applicationMethod      ApplicationMethod
+  applicationUrl         String?               @db.Text
+  sourceId               String?               @db.VarChar(30)
+  sourceUrl              String?               @db.Text
+  sourceExternalId       String?               @db.VarChar(191)
+  sourceUrlHash          String?               @db.Char(64)
+  deduplicationKey       String                @unique(map: "uq_jobs_deduplication_key") @db.Char(64)
+  jobImportId            String?               @db.VarChar(30)
+  originalPublishedAt    DateTime?             @db.DateTime(3)
+  verificationStatus     JobVerificationStatus @default(UNVERIFIED)
+  verifiedAt             DateTime?             @db.DateTime(3)
+  verifiedById           String?               @db.VarChar(30)
+  publishedAt            DateTime?             @db.DateTime(3)
+  applicationDeadline    DateTime?             @db.DateTime(3)
+  expiresAt              DateTime?             @db.DateTime(3)
+  status                 JobStatus             @default(DRAFT)
+  isFeatured             Boolean               @default(false)
   /// Advert or banner image (e.g. a newspaper advertisement) stored in Cloudinary.
-  imageUrl            String?               @db.Text
+  imageUrl               String?               @db.Text
   /// Set when a company posted the job from its own employer account.
-  postedByEmployerId  String?               @db.VarChar(30)
-  postedByEmployer    EmployerUser?         @relation("EmployerPostedJobs", fields: [postedByEmployerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  createdAt           DateTime              @default(now()) @db.DateTime(3)
-  updatedAt           DateTime              @updatedAt @db.DateTime(3)
-  company             Company               @relation(fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  category            JobCategory           @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  location            JobLocation           @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  source              JobSource?            @relation(fields: [sourceId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  jobImport           JobImport?            @relation(fields: [jobImportId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  verifiedBy          Admin?                @relation("VerifiedJobs", fields: [verifiedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  duplicateImportRows JobImportRow[]        @relation("DuplicateImportRows")
-  slugRedirects       JobSlugRedirect[]
-  tags                JobTagAssignment[]
-  sourceDiscoveries   SourceDiscovery[]
-  analyticsEvents     AnalyticsEvent[]
-  applications        JobApplication[]
+  postedByEmployerId     String?               @db.VarChar(30)
+  postedByEmployer       EmployerUser?         @relation("EmployerPostedJobs", fields: [postedByEmployerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  createdAt              DateTime              @default(now()) @db.DateTime(3)
+  updatedAt              DateTime              @updatedAt @db.DateTime(3)
+  company                Company               @relation(fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  category               JobCategory           @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  location               JobLocation           @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  source                 JobSource?            @relation(fields: [sourceId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  jobImport              JobImport?            @relation(fields: [jobImportId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  verifiedBy             Admin?                @relation("VerifiedJobs", fields: [verifiedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  duplicateImportRows    JobImportRow[]        @relation("DuplicateImportRows")
+  slugRedirects          JobSlugRedirect[]
+  tags                   JobTagAssignment[]
+  sourceDiscoveries      SourceDiscovery[]
+  analyticsEvents        AnalyticsEvent[]
+  applications           JobApplication[]
 
   @@unique([sourceId, sourceExternalId], map: "uq_jobs_source_external_id")
   @@unique([sourceId, sourceUrlHash], map: "uq_jobs_source_url_hash")

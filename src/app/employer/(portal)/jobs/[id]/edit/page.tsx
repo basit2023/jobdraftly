@@ -41,6 +41,8 @@ export default async function EditEmployerJobPage({ params }: { params: Promise<
           employmentType: job.employmentType,
           experienceLevel: job.experienceLevel,
           workplaceType: job.workplaceType,
+          workplaceStreetAddress: job.workplaceStreetAddress ?? "",
+          workplacePostalCode: job.workplacePostalCode ?? "",
           education: job.education ?? "",
           description: job.description,
           responsibilities: job.responsibilities ?? "",

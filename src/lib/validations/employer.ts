@@ -30,6 +30,8 @@ export const employerJobSchema = z
     employmentType: z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "TEMPORARY", "INTERNSHIP", "FREELANCE", "OTHER"]),
     experienceLevel: z.enum(["NOT_SPECIFIED", "ENTRY_LEVEL", "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "MANAGER", "DIRECTOR", "EXECUTIVE"]),
     workplaceType: z.enum(["NOT_SPECIFIED", "ONSITE", "HYBRID", "REMOTE"]),
+    workplaceStreetAddress: optionalText(255),
+    workplacePostalCode: optionalText(20),
     education: optionalText(191),
     description: z.string().trim().min(80, "Describe the job in at least 80 characters").max(50_000),
     responsibilities: optionalText(20_000),
@@ -58,6 +60,9 @@ export const employerJobSchema = z
     }
     if (data.salaryVisibility !== "HIDDEN" && data.salaryVisibility !== "NEGOTIABLE" && data.salaryMin === null && data.salaryMax === null) {
       context.addIssue({ code: "custom", path: ["salaryMin"], message: "Enter a salary, or choose Hidden or Negotiable" });
+    }
+    if (data.salaryVisibility !== "HIDDEN" && data.salaryVisibility !== "NEGOTIABLE" && !data.salaryPeriod) {
+      context.addIssue({ code: "custom", path: ["salaryPeriod"], message: "Choose whether the salary is hourly, daily, weekly, monthly or yearly" });
     }
   });
 
