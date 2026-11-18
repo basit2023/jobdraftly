@@ -98,13 +98,14 @@ export function buildJobPosting(job: PublicJobDetail, now = new Date()): JsonObj
     schema.jobLocationType = "TELECOMMUTE";
     schema.applicantLocationRequirements = { "@type": "Country", name: "Pakistan" };
   } else {
+    const addressRegion = job.location.province?.name ?? (job.location.type === "PROVINCE" ? job.location.name : undefined);
     schema.jobLocation = {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
         ...(job.workplaceStreetAddress ? { streetAddress: job.workplaceStreetAddress } : {}),
         addressLocality: job.location.name,
-        ...(job.location.province ? { addressRegion: job.location.province.name } : {}),
+        ...(addressRegion ? { addressRegion } : {}),
         ...(job.workplacePostalCode ? { postalCode: job.workplacePostalCode } : {}),
         addressCountry: "PK",
       },

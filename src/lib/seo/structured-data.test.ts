@@ -81,6 +81,17 @@ describe("technical SEO", () => {
     expect(schema.jobLocation).not.toHaveProperty("address.postalCode");
   });
 
+  it("uses a province-level location itself as the address region", () => {
+    const province = representativeJob().location.province!;
+    const schema = buildJobPosting(
+      representativeJob({ locationId: province.id, location: { ...province, province: null } }),
+      now,
+    )!;
+    expect(schema.jobLocation).toMatchObject({
+      address: { addressLocality: "Punjab", addressRegion: "Punjab", addressCountry: "PK" },
+    });
+  });
+
   it("does not emit JobPosting without an application destination", () => {
     expect(buildJobPosting(representativeJob({ applicationUrl: null }), now)).toBeNull();
   });
