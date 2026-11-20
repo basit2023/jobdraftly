@@ -64,6 +64,47 @@ describe("security boundaries", () => {
     expect(hasSameOrigin(request)).toBe(false);
   });
 
+  it("accepts the live site when HTTPS ends before nginx (proxy reports http)", () => {
+    // Cloudflare / hosting panel terminates TLS; nginx passes Host and X-Forwarded-Proto: http.
+    const request = new Request("http://127.0.0.1:3100/api/jobs/job_123/apply", {
+      method: "POST",
+      headers: { origin: "https://jobdraftly.com", host: "jobdraftly.com", "x-forwarded-proto": "http" },
+    });
+    expect(hasSameOrigin(request)).toBe(true);
+  });
+
+  it("accepts the live site when nginx only passes Host (no X-Forwarded-Host)", () => {
+    const request = new Request("http://127.0.0.1:3100/api/jobs/job_123/apply", {
+      method: "POST",
+      headers: { origin: "https://jobdraftly.com", host: "jobdraftly.com:443" },
+    });
+    expect(hasSameOrigin(request)).toBe(true);
+  });
+
+  it("accepts both www and non-www forms of the configured site", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://www.jobdraftly.com");
+    try {
+      for (const origin of ["https://jobdraftly.com", "https://www.jobdraftly.com"]) {
+        const request = new Request("http://127.0.0.1:3100/api/jobs/job_123/apply", { method: "POST", headers: { origin } });
+        expect(hasSameOrigin(request)).toBe(true);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("still rejects other sites, look-alike hosts and sandboxed pages", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://www.jobdraftly.com");
+    try {
+      for (const origin of ["https://evil.example", "https://jobdraftly.com.evil.example", "https://evil-jobdraftly.com", "https://evil.jobdraftly.com", "null", "javascript:alert(1)"]) {
+        const request = new Request("http://127.0.0.1:3100/api/jobs/job_123/apply", { method: "POST", headers: { origin, host: "jobdraftly.com" } });
+        expect(hasSameOrigin(request), origin).toBe(false);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("validates image type, dimensions, and structure", () => {
     expect(validateImage(png(400, 200), "image/png")).toMatchObject({ extension: "png", width: 400, height: 200 });
     expect(validateImage(png(400, 200), "image/jpeg")).toBeNull();
