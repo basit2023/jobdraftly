@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { validateImage } from "@/lib/security/image-validation";
 import { rateLimit, resetRateLimitsForTests } from "@/lib/security/rate-limit";
@@ -25,6 +25,43 @@ describe("security boundaries", () => {
   it("rejects cross-origin custom API mutations", () => {
     expect(hasSameOrigin(new Request("https://jobdraftly.com/api/admin/test", { headers: { origin: "https://evil.example" } }))).toBe(false);
     expect(hasSameOrigin(new Request("https://jobdraftly.com/api/admin/test", { headers: { origin: "https://jobdraftly.com" } }))).toBe(true);
+  });
+
+  it("accepts the public origin behind the trusted reverse proxy", () => {
+    const request = new Request("https://127.0.0.1:3100/api/jobs/job_123/apply", {
+      method: "POST",
+      headers: {
+        origin: "https://jobdraftly.com",
+        "x-forwarded-host": "jobdraftly.com",
+        "x-forwarded-proto": "https",
+      },
+    });
+    expect(hasSameOrigin(request)).toBe(true);
+  });
+
+  it("accepts the configured public origin when Next.js exposes its loopback URL", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://jobdraftly.com");
+    try {
+      const request = new Request("https://127.0.0.1:3100/api/jobs/job_123/apply", {
+        method: "POST",
+        headers: { origin: "https://jobdraftly.com" },
+      });
+      expect(hasSameOrigin(request)).toBe(true);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("does not let proxy metadata authorize a different browser origin", () => {
+    const request = new Request("https://127.0.0.1:3100/api/admin/test", {
+      method: "POST",
+      headers: {
+        origin: "https://evil.example",
+        "x-forwarded-host": "jobdraftly.com",
+        "x-forwarded-proto": "https",
+      },
+    });
+    expect(hasSameOrigin(request)).toBe(false);
   });
 
   it("validates image type, dimensions, and structure", () => {
