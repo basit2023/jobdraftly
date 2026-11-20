@@ -19,6 +19,8 @@ export type EmployerJobDefaults = Partial<{
   employmentType: string;
   experienceLevel: string;
   workplaceType: string;
+  workplaceStreetAddress: string;
+  workplacePostalCode: string;
   education: string;
   description: string;
   responsibilities: string;
@@ -98,6 +100,12 @@ export function EmployerJobForm({
               <option value="REMOTE">Remote</option>
               <option value="NOT_SPECIFIED">Not specified</option>
             </select>
+          </Field>
+          <Field error={errors.workplaceStreetAddress} hint="Optional. Enter the physical workplace address, not your mailing address." label="Workplace street address">
+            <input className={inputClass} defaultValue={defaults.workplaceStreetAddress} maxLength={255} name="workplaceStreetAddress" placeholder="e.g. Constitution Avenue" />
+          </Field>
+          <Field error={errors.workplacePostalCode} hint="Optional; only if known." label="Postal code">
+            <input className={inputClass} defaultValue={defaults.workplacePostalCode} maxLength={20} name="workplacePostalCode" placeholder="e.g. 44000" />
           </Field>
           <Field label="Experience">
             <select className={inputClass} defaultValue={defaults.experienceLevel ?? "NOT_SPECIFIED"} name="experienceLevel">

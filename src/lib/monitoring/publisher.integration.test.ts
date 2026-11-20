@@ -34,6 +34,8 @@ const baseJob: AiJob = {
   employmentType: "FULL_TIME",
   experienceLevel: "MID_LEVEL",
   workplaceType: "ONSITE",
+  workplaceStreetAddress: null,
+  workplacePostalCode: null,
   education: null,
   location: null,
   category: null,

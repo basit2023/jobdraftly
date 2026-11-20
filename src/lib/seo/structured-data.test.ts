@@ -24,6 +24,8 @@ function representativeJob(overrides: Partial<PublicJobDetail> = {}): PublicJobD
     salaryVisibility: "RANGE",
     salaryPeriod: "MONTH",
     workplaceType: "ONSITE",
+    workplaceStreetAddress: "1 Constitution Avenue",
+    workplacePostalCode: "44000",
     applicationMethod: "EXTERNAL_URL",
     applicationUrl: "https://example.invalid/apply/test",
     sourceId: null,
@@ -61,7 +63,7 @@ describe("technical SEO", () => {
   it("builds an onsite JobPosting whose salary has a genuine period", () => {
     const schema = buildJobPosting(representativeJob(), now)!;
     expect(schema).toMatchObject({ "@type": "JobPosting", title: "Development Test Engineer", datePosted: "2026-11-01T00:00:00.000Z", employmentType: "FULL_TIME" });
-    expect(schema.jobLocation).toMatchObject({ address: { addressLocality: "Lahore", addressRegion: "Punjab", addressCountry: "PK" } });
+    expect(schema.jobLocation).toMatchObject({ address: { streetAddress: "1 Constitution Avenue", addressLocality: "Lahore", addressRegion: "Punjab", postalCode: "44000", addressCountry: "PK" } });
     expect(schema.baseSalary).toMatchObject({ currency: "PKR", value: { minValue: 100_000, maxValue: 120_000, unitText: "MONTH" } });
   });
 
@@ -70,6 +72,24 @@ describe("technical SEO", () => {
     expect(schema).toMatchObject({ jobLocationType: "TELECOMMUTE", applicantLocationRequirements: { "@type": "Country", name: "Pakistan" } });
     expect(schema).not.toHaveProperty("jobLocation");
     expect(schema).not.toHaveProperty("baseSalary");
+  });
+
+  it("omits unknown address details instead of inventing them", () => {
+    const schema = buildJobPosting(representativeJob({ workplaceStreetAddress: null, workplacePostalCode: null }), now)!;
+    expect(schema.jobLocation).toMatchObject({ address: { addressLocality: "Lahore", addressCountry: "PK" } });
+    expect(schema.jobLocation).not.toHaveProperty("address.streetAddress");
+    expect(schema.jobLocation).not.toHaveProperty("address.postalCode");
+  });
+
+  it("uses a province-level location itself as the address region", () => {
+    const province = representativeJob().location.province!;
+    const schema = buildJobPosting(
+      representativeJob({ locationId: province.id, location: { ...province, province: null } }),
+      now,
+    )!;
+    expect(schema.jobLocation).toMatchObject({
+      address: { addressLocality: "Punjab", addressRegion: "Punjab", addressCountry: "PK" },
+    });
   });
 
   it("does not emit JobPosting without an application destination", () => {

@@ -56,6 +56,8 @@ export type JobMinAggregateOutputType = {
   salaryVisibility: $Enums.SalaryVisibility | null
   salaryPeriod: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType | null
+  workplaceStreetAddress: string | null
+  workplacePostalCode: string | null
   applicationMethod: $Enums.ApplicationMethod | null
   applicationUrl: string | null
   sourceId: string | null
@@ -99,6 +101,8 @@ export type JobMaxAggregateOutputType = {
   salaryVisibility: $Enums.SalaryVisibility | null
   salaryPeriod: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType | null
+  workplaceStreetAddress: string | null
+  workplacePostalCode: string | null
   applicationMethod: $Enums.ApplicationMethod | null
   applicationUrl: string | null
   sourceId: string | null
@@ -142,6 +146,8 @@ export type JobCountAggregateOutputType = {
   salaryVisibility: number
   salaryPeriod: number
   workplaceType: number
+  workplaceStreetAddress: number
+  workplacePostalCode: number
   applicationMethod: number
   applicationUrl: number
   sourceId: number
@@ -197,6 +203,8 @@ export type JobMinAggregateInputType = {
   salaryVisibility?: true
   salaryPeriod?: true
   workplaceType?: true
+  workplaceStreetAddress?: true
+  workplacePostalCode?: true
   applicationMethod?: true
   applicationUrl?: true
   sourceId?: true
@@ -240,6 +248,8 @@ export type JobMaxAggregateInputType = {
   salaryVisibility?: true
   salaryPeriod?: true
   workplaceType?: true
+  workplaceStreetAddress?: true
+  workplacePostalCode?: true
   applicationMethod?: true
   applicationUrl?: true
   sourceId?: true
@@ -283,6 +293,8 @@ export type JobCountAggregateInputType = {
   salaryVisibility?: true
   salaryPeriod?: true
   workplaceType?: true
+  workplaceStreetAddress?: true
+  workplacePostalCode?: true
   applicationMethod?: true
   applicationUrl?: true
   sourceId?: true
@@ -413,6 +425,8 @@ export type JobGroupByOutputType = {
   salaryVisibility: $Enums.SalaryVisibility
   salaryPeriod: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress: string | null
+  workplacePostalCode: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl: string | null
   sourceId: string | null
@@ -479,6 +493,8 @@ export type JobWhereInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFilter<"Job"> | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.EnumSalaryPeriodNullableFilter<"Job"> | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFilter<"Job"> | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.StringNullableFilter<"Job"> | string | null
+  workplacePostalCode?: Prisma.StringNullableFilter<"Job"> | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFilter<"Job"> | $Enums.ApplicationMethod
   applicationUrl?: Prisma.StringNullableFilter<"Job"> | string | null
   sourceId?: Prisma.StringNullableFilter<"Job"> | string | null
@@ -535,6 +551,8 @@ export type JobOrderByWithRelationInput = {
   salaryVisibility?: Prisma.SortOrder
   salaryPeriod?: Prisma.SortOrderInput | Prisma.SortOrder
   workplaceType?: Prisma.SortOrder
+  workplaceStreetAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  workplacePostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   applicationMethod?: Prisma.SortOrder
   applicationUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   sourceId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -598,6 +616,8 @@ export type JobWhereUniqueInput = Prisma.AtLeast<{
   salaryVisibility?: Prisma.EnumSalaryVisibilityFilter<"Job"> | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.EnumSalaryPeriodNullableFilter<"Job"> | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFilter<"Job"> | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.StringNullableFilter<"Job"> | string | null
+  workplacePostalCode?: Prisma.StringNullableFilter<"Job"> | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFilter<"Job"> | $Enums.ApplicationMethod
   applicationUrl?: Prisma.StringNullableFilter<"Job"> | string | null
   sourceId?: Prisma.StringNullableFilter<"Job"> | string | null
@@ -653,6 +673,8 @@ export type JobOrderByWithAggregationInput = {
   salaryVisibility?: Prisma.SortOrder
   salaryPeriod?: Prisma.SortOrderInput | Prisma.SortOrder
   workplaceType?: Prisma.SortOrder
+  workplaceStreetAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  workplacePostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   applicationMethod?: Prisma.SortOrder
   applicationUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   sourceId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -704,6 +726,8 @@ export type JobScalarWhereWithAggregatesInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityWithAggregatesFilter<"Job"> | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.EnumSalaryPeriodNullableWithAggregatesFilter<"Job"> | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeWithAggregatesFilter<"Job"> | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.StringNullableWithAggregatesFilter<"Job"> | string | null
+  workplacePostalCode?: Prisma.StringNullableWithAggregatesFilter<"Job"> | string | null
   applicationMethod?: Prisma.EnumApplicationMethodWithAggregatesFilter<"Job"> | $Enums.ApplicationMethod
   applicationUrl?: Prisma.StringNullableWithAggregatesFilter<"Job"> | string | null
   sourceId?: Prisma.StringNullableWithAggregatesFilter<"Job"> | string | null
@@ -744,6 +768,8 @@ export type JobCreateInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -796,6 +822,8 @@ export type JobUncheckedCreateInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -842,6 +870,8 @@ export type JobUpdateInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -894,6 +924,8 @@ export type JobUncheckedUpdateInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -943,6 +975,8 @@ export type JobCreateManyInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -983,6 +1017,8 @@ export type JobUpdateManyMutationInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1022,6 +1058,8 @@ export type JobUncheckedUpdateManyInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1096,6 +1134,8 @@ export type JobCountOrderByAggregateInput = {
   salaryVisibility?: Prisma.SortOrder
   salaryPeriod?: Prisma.SortOrder
   workplaceType?: Prisma.SortOrder
+  workplaceStreetAddress?: Prisma.SortOrder
+  workplacePostalCode?: Prisma.SortOrder
   applicationMethod?: Prisma.SortOrder
   applicationUrl?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
@@ -1144,6 +1184,8 @@ export type JobMaxOrderByAggregateInput = {
   salaryVisibility?: Prisma.SortOrder
   salaryPeriod?: Prisma.SortOrder
   workplaceType?: Prisma.SortOrder
+  workplaceStreetAddress?: Prisma.SortOrder
+  workplacePostalCode?: Prisma.SortOrder
   applicationMethod?: Prisma.SortOrder
   applicationUrl?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
@@ -1187,6 +1229,8 @@ export type JobMinOrderByAggregateInput = {
   salaryVisibility?: Prisma.SortOrder
   salaryPeriod?: Prisma.SortOrder
   workplaceType?: Prisma.SortOrder
+  workplaceStreetAddress?: Prisma.SortOrder
+  workplacePostalCode?: Prisma.SortOrder
   applicationMethod?: Prisma.SortOrder
   applicationUrl?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
@@ -1653,6 +1697,8 @@ export type JobCreateWithoutVerifiedByInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -1704,6 +1750,8 @@ export type JobUncheckedCreateWithoutVerifiedByInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -1781,6 +1829,8 @@ export type JobScalarWhereInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFilter<"Job"> | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.EnumSalaryPeriodNullableFilter<"Job"> | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFilter<"Job"> | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.StringNullableFilter<"Job"> | string | null
+  workplacePostalCode?: Prisma.StringNullableFilter<"Job"> | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFilter<"Job"> | $Enums.ApplicationMethod
   applicationUrl?: Prisma.StringNullableFilter<"Job"> | string | null
   sourceId?: Prisma.StringNullableFilter<"Job"> | string | null
@@ -1821,6 +1871,8 @@ export type JobCreateWithoutCompanyInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -1871,6 +1923,8 @@ export type JobUncheckedCreateWithoutCompanyInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -1943,6 +1997,8 @@ export type JobCreateWithoutCategoryInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -1993,6 +2049,8 @@ export type JobUncheckedCreateWithoutCategoryInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2065,6 +2123,8 @@ export type JobCreateWithoutLocationInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2115,6 +2175,8 @@ export type JobUncheckedCreateWithoutLocationInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2187,6 +2249,8 @@ export type JobCreateWithoutSourceInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2238,6 +2302,8 @@ export type JobUncheckedCreateWithoutSourceInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2309,6 +2375,8 @@ export type JobCreateWithoutJobImportInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2360,6 +2428,8 @@ export type JobUncheckedCreateWithoutJobImportInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2431,6 +2501,8 @@ export type JobCreateWithoutDuplicateImportRowsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2482,6 +2554,8 @@ export type JobUncheckedCreateWithoutDuplicateImportRowsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2543,6 +2617,8 @@ export type JobUpdateWithoutDuplicateImportRowsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2594,6 +2670,8 @@ export type JobUncheckedUpdateWithoutDuplicateImportRowsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2639,6 +2717,8 @@ export type JobCreateWithoutAnalyticsEventsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2690,6 +2770,8 @@ export type JobUncheckedCreateWithoutAnalyticsEventsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2751,6 +2833,8 @@ export type JobUpdateWithoutAnalyticsEventsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2802,6 +2886,8 @@ export type JobUncheckedUpdateWithoutAnalyticsEventsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2847,6 +2933,8 @@ export type JobCreateWithoutSourceDiscoveriesInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -2898,6 +2986,8 @@ export type JobUncheckedCreateWithoutSourceDiscoveriesInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -2959,6 +3049,8 @@ export type JobUpdateWithoutSourceDiscoveriesInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3010,6 +3102,8 @@ export type JobUncheckedUpdateWithoutSourceDiscoveriesInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3055,6 +3149,8 @@ export type JobCreateWithoutSlugRedirectsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -3106,6 +3202,8 @@ export type JobUncheckedCreateWithoutSlugRedirectsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -3167,6 +3265,8 @@ export type JobUpdateWithoutSlugRedirectsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3218,6 +3318,8 @@ export type JobUncheckedUpdateWithoutSlugRedirectsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3263,6 +3365,8 @@ export type JobCreateWithoutTagsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -3314,6 +3418,8 @@ export type JobUncheckedCreateWithoutTagsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -3375,6 +3481,8 @@ export type JobUpdateWithoutTagsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3426,6 +3534,8 @@ export type JobUncheckedUpdateWithoutTagsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3471,6 +3581,8 @@ export type JobCreateWithoutPostedByEmployerInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -3522,6 +3634,8 @@ export type JobUncheckedCreateWithoutPostedByEmployerInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -3593,6 +3707,8 @@ export type JobCreateWithoutApplicationsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -3644,6 +3760,8 @@ export type JobUncheckedCreateWithoutApplicationsInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -3705,6 +3823,8 @@ export type JobUpdateWithoutApplicationsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3756,6 +3876,8 @@ export type JobUncheckedUpdateWithoutApplicationsInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3804,6 +3926,8 @@ export type JobCreateManyVerifiedByInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -3843,6 +3967,8 @@ export type JobUpdateWithoutVerifiedByInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3894,6 +4020,8 @@ export type JobUncheckedUpdateWithoutVerifiedByInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3942,6 +4070,8 @@ export type JobUncheckedUpdateManyWithoutVerifiedByInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3983,6 +4113,8 @@ export type JobCreateManyCompanyInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -4023,6 +4155,8 @@ export type JobUpdateWithoutCompanyInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4073,6 +4207,8 @@ export type JobUncheckedUpdateWithoutCompanyInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4121,6 +4257,8 @@ export type JobUncheckedUpdateManyWithoutCompanyInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4163,6 +4301,8 @@ export type JobCreateManyCategoryInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -4203,6 +4343,8 @@ export type JobUpdateWithoutCategoryInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4253,6 +4395,8 @@ export type JobUncheckedUpdateWithoutCategoryInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4301,6 +4445,8 @@ export type JobUncheckedUpdateManyWithoutCategoryInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4343,6 +4489,8 @@ export type JobCreateManyLocationInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -4383,6 +4531,8 @@ export type JobUpdateWithoutLocationInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4433,6 +4583,8 @@ export type JobUncheckedUpdateWithoutLocationInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4481,6 +4633,8 @@ export type JobUncheckedUpdateManyWithoutLocationInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4524,6 +4678,8 @@ export type JobCreateManySourceInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceUrl?: string | null
@@ -4563,6 +4719,8 @@ export type JobUpdateWithoutSourceInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4614,6 +4772,8 @@ export type JobUncheckedUpdateWithoutSourceInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4662,6 +4822,8 @@ export type JobUncheckedUpdateManyWithoutSourceInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4704,6 +4866,8 @@ export type JobCreateManyJobImportInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -4743,6 +4907,8 @@ export type JobUpdateWithoutJobImportInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4794,6 +4960,8 @@ export type JobUncheckedUpdateWithoutJobImportInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4842,6 +5010,8 @@ export type JobUncheckedUpdateManyWithoutJobImportInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4884,6 +5054,8 @@ export type JobCreateManyPostedByEmployerInput = {
   salaryVisibility?: $Enums.SalaryVisibility
   salaryPeriod?: $Enums.SalaryPeriod | null
   workplaceType: $Enums.WorkplaceType
+  workplaceStreetAddress?: string | null
+  workplacePostalCode?: string | null
   applicationMethod: $Enums.ApplicationMethod
   applicationUrl?: string | null
   sourceId?: string | null
@@ -4923,6 +5095,8 @@ export type JobUpdateWithoutPostedByEmployerInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4974,6 +5148,8 @@ export type JobUncheckedUpdateWithoutPostedByEmployerInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5022,6 +5198,8 @@ export type JobUncheckedUpdateManyWithoutPostedByEmployerInput = {
   salaryVisibility?: Prisma.EnumSalaryVisibilityFieldUpdateOperationsInput | $Enums.SalaryVisibility
   salaryPeriod?: Prisma.NullableEnumSalaryPeriodFieldUpdateOperationsInput | $Enums.SalaryPeriod | null
   workplaceType?: Prisma.EnumWorkplaceTypeFieldUpdateOperationsInput | $Enums.WorkplaceType
+  workplaceStreetAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workplacePostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicationMethod?: Prisma.EnumApplicationMethodFieldUpdateOperationsInput | $Enums.ApplicationMethod
   applicationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5140,6 +5318,8 @@ export type JobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   salaryVisibility?: boolean
   salaryPeriod?: boolean
   workplaceType?: boolean
+  workplaceStreetAddress?: boolean
+  workplacePostalCode?: boolean
   applicationMethod?: boolean
   applicationUrl?: boolean
   sourceId?: boolean
@@ -5199,6 +5379,8 @@ export type JobSelectScalar = {
   salaryVisibility?: boolean
   salaryPeriod?: boolean
   workplaceType?: boolean
+  workplaceStreetAddress?: boolean
+  workplacePostalCode?: boolean
   applicationMethod?: boolean
   applicationUrl?: boolean
   sourceId?: boolean
@@ -5222,7 +5404,7 @@ export type JobSelectScalar = {
   updatedAt?: boolean
 }
 
-export type JobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "companyId" | "categoryId" | "locationId" | "description" | "responsibilities" | "requirements" | "skills" | "employmentType" | "experienceLevel" | "education" | "salaryMin" | "salaryMax" | "salaryCurrency" | "salaryVisibility" | "salaryPeriod" | "workplaceType" | "applicationMethod" | "applicationUrl" | "sourceId" | "sourceUrl" | "sourceExternalId" | "sourceUrlHash" | "deduplicationKey" | "jobImportId" | "originalPublishedAt" | "verificationStatus" | "verifiedAt" | "verifiedById" | "publishedAt" | "applicationDeadline" | "expiresAt" | "status" | "isFeatured" | "imageUrl" | "postedByEmployerId" | "createdAt" | "updatedAt", ExtArgs["result"]["job"]>
+export type JobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "companyId" | "categoryId" | "locationId" | "description" | "responsibilities" | "requirements" | "skills" | "employmentType" | "experienceLevel" | "education" | "salaryMin" | "salaryMax" | "salaryCurrency" | "salaryVisibility" | "salaryPeriod" | "workplaceType" | "workplaceStreetAddress" | "workplacePostalCode" | "applicationMethod" | "applicationUrl" | "sourceId" | "sourceUrl" | "sourceExternalId" | "sourceUrlHash" | "deduplicationKey" | "jobImportId" | "originalPublishedAt" | "verificationStatus" | "verifiedAt" | "verifiedById" | "publishedAt" | "applicationDeadline" | "expiresAt" | "status" | "isFeatured" | "imageUrl" | "postedByEmployerId" | "createdAt" | "updatedAt", ExtArgs["result"]["job"]>
 export type JobInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   postedByEmployer?: boolean | Prisma.Job$postedByEmployerArgs<ExtArgs>
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -5277,6 +5459,8 @@ export type $JobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     salaryVisibility: $Enums.SalaryVisibility
     salaryPeriod: $Enums.SalaryPeriod | null
     workplaceType: $Enums.WorkplaceType
+    workplaceStreetAddress: string | null
+    workplacePostalCode: string | null
     applicationMethod: $Enums.ApplicationMethod
     applicationUrl: string | null
     sourceId: string | null
@@ -5705,6 +5889,8 @@ export interface JobFieldRefs {
   readonly salaryVisibility: Prisma.FieldRef<"Job", 'SalaryVisibility'>
   readonly salaryPeriod: Prisma.FieldRef<"Job", 'SalaryPeriod'>
   readonly workplaceType: Prisma.FieldRef<"Job", 'WorkplaceType'>
+  readonly workplaceStreetAddress: Prisma.FieldRef<"Job", 'String'>
+  readonly workplacePostalCode: Prisma.FieldRef<"Job", 'String'>
   readonly applicationMethod: Prisma.FieldRef<"Job", 'ApplicationMethod'>
   readonly applicationUrl: Prisma.FieldRef<"Job", 'String'>
   readonly sourceId: Prisma.FieldRef<"Job", 'String'>

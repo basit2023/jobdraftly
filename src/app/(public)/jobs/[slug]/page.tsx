@@ -82,6 +82,7 @@ export default async function JobDetailPage({ params }: Props) {
 
   const facts = [
     { label: "Location", value: job.location.name },
+    ...(job.workplaceStreetAddress || job.workplacePostalCode ? [{ label: "Workplace address", value: [job.workplaceStreetAddress, job.workplacePostalCode].filter(Boolean).join(", ") }] : []),
     { label: "Job type", value: employmentTypeLabel(job.employmentType) },
     { label: "Work arrangement", value: workplaceTypeLabel(job.workplaceType) },
     { label: "Experience", value: experienceLevelLabel(job.experienceLevel) },

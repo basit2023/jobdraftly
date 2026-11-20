@@ -223,6 +223,7 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
 
     const salaryMin = job.salaryMin && job.salaryMin > 0 ? job.salaryMin : null;
     const salaryMax = job.salaryMax && job.salaryMax > 0 ? Math.max(job.salaryMax, salaryMin ?? 0) : null;
+    const hasCompleteSalary = Boolean((salaryMin || salaryMax) && job.salaryPeriod);
     const sourceUrl = discovery.canonicalUrl;
     const expiresAt = deadline ?? new Date(now.getTime() + defaultListingDays() * 86_400_000);
     const deduplicationKey = createJobDeduplicationKey({
@@ -249,9 +250,11 @@ async function processDiscovery(discovery: DiscoveryWithContext, now: Date): Pro
           salaryMin,
           salaryMax,
           salaryCurrency: "PKR",
-          salaryVisibility: salaryMin && salaryMax ? "RANGE" : salaryMin || salaryMax ? "EXACT" : "HIDDEN",
-          salaryPeriod: salaryMin || salaryMax ? job.salaryPeriod ?? "MONTH" : null,
+          salaryVisibility: hasCompleteSalary ? salaryMin && salaryMax ? "RANGE" : "EXACT" : "HIDDEN",
+          salaryPeriod: hasCompleteSalary ? job.salaryPeriod : null,
           workplaceType: job.workplaceType,
+          workplaceStreetAddress: job.workplaceType === "REMOTE" ? null : job.workplaceStreetAddress?.trim().slice(0, 255) || null,
+          workplacePostalCode: job.workplaceType === "REMOTE" ? null : job.workplacePostalCode?.trim().slice(0, 20) || null,
           applicationMethod: "EXTERNAL_URL",
           applicationUrl,
           sourceId: discovery.sourceId,
